@@ -1,15 +1,5 @@
 """
-main.py
-
-Entry point for the Blink-to-Morse Translator.
-
-PIPELINE OVERVIEW:
-    Camera -> Face landmark detection (MediaPipe) -> Eye Aspect Ratio (EAR)
-    -> Short/Long blink classification -> Morse buffer -> Letter/word timing
-    -> Morse-to-text decoding -> Speech + Logging + On-screen display
-
-    Head NOD  -> insert a space (alternative to waiting for the pause timer)
-    Head TURN -> backspace (delete the last character)
+main.py  (v3 -- bug fixes for calibration visibility, head gestures, TTS, logging)
 
 RUN: python main.py
 CONTROLS:
@@ -24,20 +14,22 @@ import time
 
 from blink_detector import average_ear, is_eye_closed
 from morse_translator import decode_letter
-from calibration import calibrate_ear_threshold
-from head_gesture import get_head_pose, HeadGestureTracker
+import calibration
+from head_gesture import get_head_metrics, HeadGestureTracker
 from speech import SpeechEngine
-from logger import log_text
+from logger import log_text, LOG_FILE
 
-# --- Timing rules (in seconds) ---
-SHORT_BLINK_MAX = 0.3   # blink shorter than this = dot, otherwise = dash
-LETTER_PAUSE = 1.2      # pause after last blink -> commit current letter
-WORD_PAUSE = 3.0        # pause after last blink -> also insert a space
+SHORT_BLINK_MAX = 0.3
+LETTER_PAUSE = 1.2
+WORD_PAUSE = 3.0
+DEFAULT_EAR_THRESHOLD = 0.21
 
-DEFAULT_EAR_THRESHOLD = 0.21  # fallback if auto-calibration fails
+WINDOW_NAME = "Blink to Morse Translator"
 
 
 def main():
+    print(f"[logger] Session log will be saved to: {LOG_FILE}")
+
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(
         max_num_faces=1,
@@ -47,23 +39,27 @@ def main():
     )
 
     cap = cv2.VideoCapture(0)
+    cv2.namedWindow(WINDOW_NAME)
 
-    # --- Feature 5: Auto-calibration ---
-    ear_threshold = calibrate_ear_threshold(cap, face_mesh)
-    if ear_threshold is None:
-        ear_threshold = DEFAULT_EAR_THRESHOLD
-
-    # --- Feature 1 setup: head gesture tracker ---
-    gesture_tracker = HeadGestureTracker()
-
-    # --- Feature 2 setup: text-to-speech engine ---
     speech_engine = SpeechEngine()
+    # Speak immediately on startup -- an easy way to confirm audio
+    # is actually working before you start relying on it.
+    speech_engine.speak("System ready. Starting calibration.")
 
-    # --- State that changes as the program runs ---
+    cal_result = calibration.calibrate(cap, face_mesh, duration=5.0, window_name=WINDOW_NAME)
+    if cal_result is None:
+        ear_threshold = DEFAULT_EAR_THRESHOLD
+        gesture_tracker = HeadGestureTracker()
+    else:
+        ear_threshold = cal_result["ear_threshold"]
+        gesture_tracker = HeadGestureTracker()
+        if cal_result["pitch"] is not None:
+            gesture_tracker.set_baseline(cal_result["pitch"], cal_result["yaw"])
+
     eye_closed = False
     close_start_time = None
-    morse_buffer = ""       # dots/dashes for the letter currently being spelled
-    decoded_text = ""       # the full decoded sentence so far
+    morse_buffer = ""
+    decoded_text = ""
     last_blink_end_time = None
     word_pause_added = False
 
@@ -75,17 +71,19 @@ def main():
         if not ret:
             break
 
-        frame = cv2.flip(frame, 1)  # mirror view, feels more natural
+        frame = cv2.flip(frame, 1)
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = face_mesh.process(rgb_frame)
         h, w, _ = frame.shape
         now = time.time()
 
+        pitch_delta_display = None
+        yaw_delta_display = None
+
         if results.multi_face_landmarks:
             landmarks = results.multi_face_landmarks[0].landmark
             ear = average_ear(landmarks, w, h)
 
-            # --- Blink detection (dot/dash) ---
             if is_eye_closed(ear, ear_threshold):
                 if not eye_closed:
                     eye_closed = True
@@ -98,25 +96,30 @@ def main():
                     last_blink_end_time = now
                     word_pause_added = False
 
-            # --- Feature 1: head nod/turn gestures ---
-            pitch, yaw = get_head_pose(landmarks, w, h)
+            pitch, yaw = get_head_metrics(landmarks, w, h)
+            if gesture_tracker.baseline_pitch is not None and pitch is not None:
+                pitch_delta_display = pitch - gesture_tracker.baseline_pitch
+                yaw_delta_display = yaw - gesture_tracker.baseline_yaw
+
             gesture = gesture_tracker.update(pitch, yaw)
             if gesture == "nod":
                 if decoded_text and not decoded_text.endswith(" "):
                     decoded_text += " "
-                    print(f"[nod -> space]  So far: {decoded_text}")
+                    print(f"[gesture] NOD -> space added. So far: {decoded_text}")
             elif gesture == "turn":
                 if decoded_text:
                     decoded_text = decoded_text[:-1]
-                    print(f"[turn -> backspace]  So far: {decoded_text}")
+                    print(f"[gesture] TURN -> backspace. So far: {decoded_text}")
 
-            cv2.putText(frame, f"EAR: {ear:.3f}", (20, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+            cv2.putText(frame, f"EAR: {ear:.3f} (threshold {ear_threshold:.3f})",
+                        (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
+            if pitch_delta_display is not None:
+                cv2.putText(frame, f"Pitch delta: {pitch_delta_display:+.3f}  Yaw delta: {yaw_delta_display:+.3f}",
+                            (20, 65), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 180, 0), 2)
         else:
             cv2.putText(frame, "No face found...", (20, 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
-        # --- Check pause timing to decide when a letter/word is "done" ---
         if not eye_closed and last_blink_end_time is not None:
             gap = now - last_blink_end_time
 
@@ -130,31 +133,27 @@ def main():
                 decoded_text += " "
                 word_pause_added = True
                 print(f"[space added]  So far: {decoded_text}")
-                # Feature 3: log each completed word to the session file
                 log_text(decoded_text)
-                # Feature 2: speak the word just completed
                 last_word = decoded_text.strip().split(" ")[-1]
                 speech_engine.speak(last_word)
 
-        # --- Feature 4: UI polish -- countdown bar toward letter commit ---
         if not eye_closed and morse_buffer and last_blink_end_time is not None:
             gap = now - last_blink_end_time
             progress = min(gap / LETTER_PAUSE, 1.0)
-            bar_x, bar_y, bar_w, bar_h = 20, 100, 300, 15
+            bar_x, bar_y, bar_w, bar_h = 20, 130, 300, 15
             cv2.rectangle(frame, (bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h), (80, 80, 80), 1)
             fill_w = int(bar_w * progress)
             bar_color = (0, 0, 255) if progress > 0.8 else (0, 200, 255)
             cv2.rectangle(frame, (bar_x, bar_y), (bar_x + fill_w, bar_y + bar_h), bar_color, -1)
 
-        # --- On-screen display ---
-        cv2.putText(frame, f"Buffer: {morse_buffer}", (20, 80),
+        cv2.putText(frame, f"Buffer: {morse_buffer}", (20, 110),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        cv2.putText(frame, f"Text: {decoded_text}", (20, 150),
+        cv2.putText(frame, f"Text: {decoded_text}", (20, 175),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
         cv2.putText(frame, "'q' quit | 'c' clear | 't' speak text", (20, h - 20),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
 
-        cv2.imshow("Blink to Morse Translator", frame)
+        cv2.imshow(WINDOW_NAME, frame)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
@@ -165,6 +164,7 @@ def main():
             morse_buffer = ""
             decoded_text = ""
         elif key == ord('t'):
+            print("[main] 't' pressed -- speaking current text")
             speech_engine.speak(decoded_text)
 
     cap.release()
