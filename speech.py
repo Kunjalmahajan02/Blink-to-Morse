@@ -1,27 +1,24 @@
 """
-speech.py  (v2 -- fixes silent audio on Windows)
+speech.py  (v3 -- multilingual TTS)
 
-THE BUG: pyttsx3 uses Windows' built-in speech engine (SAPI5) through
-a library called pywin32, which relies on something called "COM."
-COM has to be explicitly initialized on whichever thread is using it.
-Our speech runs on a background thread (so it doesn't freeze the
-video), but that thread never initialized COM -- so Windows silently
-did nothing instead of speaking.
+Two TTS backends:
+- pyttsx3 (offline) for English -- same as before, no internet needed.
+- gTTS (Google TTS) for all other languages, especially Indian ones.
+  gTTS produces dramatically better results for Hindi, Tamil, Telugu,
+  etc. than pyttsx3, which on Windows only has English voices by
+  default. Requires an internet connection.
 
-THE FIX: call pythoncom.CoInitialize() at the start of the speaking
-thread, and CoUninitialize() when it's done.
+Both still run on a background thread so they don't freeze the video.
 """
 
 import threading
-import pyttsx3
+import os
+import tempfile
 
 try:
     import pythoncom
     HAS_PYTHONCOM = True
 except ImportError:
-    # Not on Windows, or pywin32 isn't installed -- speech may still
-    # work (e.g. on Mac/Linux pyttsx3 uses a different backend), we
-    # just skip the COM calls in that case.
     HAS_PYTHONCOM = False
 
 
@@ -30,28 +27,69 @@ class SpeechEngine:
         self.rate = rate
         self.volume = volume
 
-    def speak(self, text):
-        """Speaks the given text without blocking the main program."""
+    def speak(self, text, lang_code="en"):
+        """Speaks text in the given language. lang_code follows BCP-47
+        (e.g. 'hi' for Hindi, 'ta' for Tamil, 'en' for English)."""
         text = text.strip()
         if not text:
             return
-        threading.Thread(target=self._speak_now, args=(text,), daemon=True).start()
+        if lang_code == "en":
+            threading.Thread(
+                target=self._speak_pyttsx3, args=(text,), daemon=True
+            ).start()
+        else:
+            threading.Thread(
+                target=self._speak_gtts, args=(text, lang_code), daemon=True
+            ).start()
 
-    def _speak_now(self, text):
+    def _speak_pyttsx3(self, text):
+        """Offline English TTS via Windows SAPI5."""
         if HAS_PYTHONCOM:
             pythoncom.CoInitialize()
         try:
-            print(f"[speech] Speaking: \"{text}\"")
+            import pyttsx3
+            print(f"[speech/en] Speaking: \"{text}\"")
             engine = pyttsx3.init()
-            engine.setProperty('rate', self.rate)
-            engine.setProperty('volume', self.volume)
+            engine.setProperty("rate", self.rate)
+            engine.setProperty("volume", self.volume)
             engine.say(text)
             engine.runAndWait()
             engine.stop()
         except Exception as e:
-            # Printing the real error is important for debugging --
-            # silent failures are exactly what caused this bug.
-            print(f"[speech] ERROR while speaking: {e}")
+            print(f"[speech/en] ERROR: {e}")
         finally:
             if HAS_PYTHONCOM:
                 pythoncom.CoUninitialize()
+
+    def _speak_gtts(self, text, lang_code):
+        """Online Indian/multilingual TTS via Google (gTTS)."""
+        tmp_path = None
+        try:
+            from gtts import gTTS
+            import pygame
+
+            print(f"[speech/{lang_code}] Speaking: \"{text}\"")
+
+            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
+                tmp_path = f.name
+
+            gTTS(text=text, lang=lang_code, slow=False).save(tmp_path)
+
+            pygame.mixer.init()
+            pygame.mixer.music.load(tmp_path)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pygame.time.wait(50)
+            pygame.mixer.quit()
+
+        except ImportError as e:
+            print(f"[speech/{lang_code}] Missing library: {e}")
+            print("  Run: pip install gTTS pygame")
+        except Exception as e:
+            print(f"[speech/{lang_code}] ERROR: {e}")
+        finally:
+            if tmp_path:
+                try:
+                    os.unlink(tmp_path)
+                except Exception:
+                    pass

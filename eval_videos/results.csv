@@ -1,0 +1,3 @@
+filename,condition,expected,decoded,exact_match,char_accuracy,letter_accuracy,decoded_adaptive,exact_match_adaptive,char_accuracy_adaptive,letter_accuracy_adaptive,reconstructed_letters,expected_blinks,detected_blinks,ear_threshold,face_lost_pct,duration_s,processing_s
+WIN_20260923_21_09_57_Pro.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,0,9,12,0.229,0.0,16.0,4.2
+WIN_20260923_21_15_06_Pro.mp4,good_light,SOS,SO S,0,0.667,1.0,SO S S,0,0.0,0.667,0,9,12,0.216,0.0,18.4,3.8

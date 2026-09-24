@@ -1,54 +1,114 @@
 """
-gui.py  (v2 -- HUD / covert-terminal visual theme)
+gui.py  (PyQt6 version)
 
-Same functionality as before (real-time webcam + video-file upload,
-both driven by pipeline.py), restyled to look like a covert-ops
-monitoring terminal: dark background, neon green monospace text, HUD
-corner brackets and a scanning sweep line drawn directly onto the
-video feed, and a live REC indicator.
+A more visually polished desktop application than the earlier Tkinter
+version -- same functionality (real-time webcam + video-file upload,
+both driven by pipeline.py), but PyQt6 lets us add real neon glow
+(drop-shadow effects) and a smooth pulsing "LIVE" animation instead of
+a blunt on/off blink.
+
+NOTE: none of the detection logic changed at all -- pipeline.py,
+blink_detector.py, head_gesture.py, speech.py, logger.py are reused
+exactly as they were. Only this display/window layer is new.
 
 RUN: python gui.py
 """
 
 import time
-import tkinter as tk
-from tkinter import filedialog, messagebox
 
 import cv2
-from PIL import Image, ImageTk
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,
+    QFrame, QFileDialog, QMessageBox, QGraphicsDropShadowEffect, QGraphicsOpacityEffect,
+    QComboBox,
+)
+from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation
+from PyQt6.QtGui import QImage, QPixmap, QColor, QFont
 
 from pipeline import BlinkMorsePipeline
 from blink_detector import average_ear
 from head_gesture import get_head_metrics
 from speech import SpeechEngine
+from translator import translate, SUPPORTED_LANGUAGES, INDIAN_LANGUAGE_NAMES
 from logger import log_text, LOG_FILE
+from forensic_mode import ForensicWindow
 
 CALIBRATION_DURATION = 5.0
 THRESHOLD_RATIO = 0.75
 
-# --- Theme ---
-BG = "#000000"
-PANEL_BG = "#0a0a0a"
-ACCENT = "#00ff66"        # neon green (RGB, for Tk widgets)
-ACCENT_DIM = "#0a4d24"
+ACCENT = "#00ff66"
 DANGER = "#ff3b3b"
-FONT = ("Consolas", 11)
-FONT_BOLD = ("Consolas", 12, "bold")
-FONT_TITLE = ("Consolas", 16, "bold")
-FONT_MONO_TEXT = ("Consolas", 15, "bold")
 
-# BGR colors for drawing directly on OpenCV frames
+# BGR colors for drawing directly on OpenCV frames (unchanged from before)
 ACCENT_BGR = (102, 255, 0)
-ACCENT_DIM_BGR = (40, 110, 0)
 DANGER_BGR = (60, 60, 255)
 
+STYLE_SHEET = f"""
+QWidget {{
+    background-color: #000000;
+    color: {ACCENT};
+    font-family: Consolas;
+}}
+QPushButton {{
+    background-color: #001a0d;
+    color: {ACCENT};
+    border: 1px solid {ACCENT};
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 12px;
+}}
+QPushButton:hover {{
+    background-color: #00331a;
+    border: 1px solid #55ffaa;
+}}
+QPushButton:pressed {{
+    background-color: #004d26;
+}}
+QFrame#videoFrame {{
+    border: 2px solid {ACCENT};
+    border-radius: 12px;
+    background-color: #000000;
+}}
+QFrame#readoutPanel {{
+    background-color: #0a0a0a;
+    border: 1px solid #0a4d24;
+    border-radius: 10px;
+}}
+"""
 
-class BlinkMorseApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("BLINK-CIPHER :: COVERT COMMS TERMINAL")
-        self.root.geometry("920x780")
-        self.root.configure(bg=BG)
+TERMINATE_STYLE = f"""
+QPushButton {{
+    background-color: #1a0000;
+    color: {DANGER};
+    border: 1px solid {DANGER};
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 12px;
+}}
+QPushButton:hover {{
+    background-color: #330000;
+}}
+"""
+
+
+def glow(widget, color=ACCENT, radius=20):
+    """Applies a neon drop-shadow glow effect to any widget."""
+    effect = QGraphicsDropShadowEffect()
+    effect.setColor(QColor(color))
+    effect.setBlurRadius(radius)
+    effect.setOffset(0, 0)
+    widget.setGraphicsEffect(effect)
+    return effect
+
+
+class BlinkMorseApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("BLINK-CIPHER :: COVERT COMMS TERMINAL")
+        self.resize(960, 800)
+        self.setStyleSheet(STYLE_SHEET)
 
         self.cap = None
         self.pipeline = None
@@ -57,7 +117,6 @@ class BlinkMorseApp:
         self.video_fps = 30.0
         self.video_frame_index = 0
         self.frame_counter = 0
-        self.session_start = None
 
         self.calibrating = False
         self.cal_start_time = None
@@ -65,114 +124,212 @@ class BlinkMorseApp:
         self.cal_pitch_readings = []
         self.cal_yaw_readings = []
 
-        self._blink_on = False
         self.speech_engine = SpeechEngine()
+        self._last_translation_time = 0
+        self._last_translated_text = ""
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._update_frame)
 
         self._build_ui()
-        self._blink_indicator()
 
     # ---------------- UI LAYOUT ----------------
 
     def _build_ui(self):
-        header = tk.Frame(self.root, bg=BG)
-        header.pack(fill="x", pady=(12, 4))
+        root = QVBoxLayout(self)
+        root.setSpacing(14)
+        root.setContentsMargins(24, 20, 24, 20)
 
-        tk.Label(header, text="BLINK-CIPHER // COVERT COMMS TERMINAL",
-                 font=FONT_TITLE, bg=BG, fg=ACCENT).pack(side="left", padx=20)
+        # --- Header ---
+        header = QHBoxLayout()
+        title = QLabel("BLINK-CIPHER // COVERT COMMS TERMINAL")
+        title.setFont(QFont("Consolas", 18, QFont.Weight.Bold))
+        glow(title, ACCENT, 25)
+        header.addWidget(title)
+        header.addStretch()
 
-        self.indicator_var = tk.StringVar(value="STANDBY")
-        self.indicator_label = tk.Label(header, textvariable=self.indicator_var,
-                                         font=FONT_BOLD, bg=BG, fg="#666666")
-        self.indicator_label.pack(side="right", padx=20)
+        self.indicator = QLabel("● STANDBY")
+        self.indicator.setFont(QFont("Consolas", 12, QFont.Weight.Bold))
+        self.indicator.setStyleSheet("color: #666666;")
+        header.addWidget(self.indicator)
+        root.addLayout(header)
 
-        controls = tk.Frame(self.root, bg=BG)
-        controls.pack(pady=8)
+        self._indicator_opacity = QGraphicsOpacityEffect()
+        self.indicator.setGraphicsEffect(self._indicator_opacity)
+        self._pulse_anim = QPropertyAnimation(self._indicator_opacity, b"opacity")
+        self._pulse_anim.setDuration(1000)
+        self._pulse_anim.setKeyValueAt(0.0, 1.0)
+        self._pulse_anim.setKeyValueAt(0.5, 0.3)
+        self._pulse_anim.setKeyValueAt(1.0, 1.0)
+        self._pulse_anim.setLoopCount(-1)
 
-        self._make_button(controls, "[ START REAL-TIME SCAN ]", self.start_realtime, ACCENT).pack(side="left", padx=6)
-        self._make_button(controls, "[ UPLOAD INTERCEPT FILE ]", self.start_video_upload, ACCENT).pack(side="left", padx=6)
-        self._make_button(controls, "[ TERMINATE ]", self.stop, DANGER).pack(side="left", padx=6)
+        # --- Controls ---
+        controls = QHBoxLayout()
+        self.start_btn = QPushButton("[ START REAL-TIME SCAN ]")
+        self.upload_btn = QPushButton("[ UPLOAD INTERCEPT FILE ]")
+        self.forensic_btn = QPushButton("[ FORENSIC ANALYSIS MODE ]")
+        self.stop_btn = QPushButton("[ TERMINATE ]")
+        self.stop_btn.setStyleSheet(TERMINATE_STYLE)
 
-        video_border = tk.Frame(self.root, bg=ACCENT, padx=2, pady=2)
-        video_border.pack(pady=14)
-        self.video_label = tk.Label(video_border, bg="black", width=640, height=360)
-        self.video_label.pack()
+        for btn in (self.start_btn, self.upload_btn, self.forensic_btn, self.stop_btn):
+            glow(btn, ACCENT if btn is not self.stop_btn else DANGER, 15)
 
-        readout = tk.Frame(self.root, bg=PANEL_BG, highlightbackground=ACCENT_DIM,
-                            highlightthickness=1)
-        readout.pack(pady=10, fill="x", padx=40)
+        self.start_btn.clicked.connect(self.start_realtime)
+        self.upload_btn.clicked.connect(self.start_video_upload)
+        self.forensic_btn.clicked.connect(self.open_forensic_mode)
+        self.stop_btn.clicked.connect(self.stop)
 
-        tk.Label(readout, text="BUFFER>", font=FONT_BOLD, bg=PANEL_BG, fg=ACCENT
-                 ).grid(row=0, column=0, sticky="w", padx=10, pady=(10, 2))
-        self.buffer_var = tk.StringVar(value="")
-        tk.Label(readout, textvariable=self.buffer_var, font=FONT_MONO_TEXT,
-                 bg=PANEL_BG, fg="#b6ffb6").grid(row=0, column=1, sticky="w", pady=(10, 2))
+        controls.addWidget(self.start_btn)
+        controls.addWidget(self.upload_btn)
+        controls.addWidget(self.forensic_btn)
+        controls.addWidget(self.stop_btn)
+        root.addLayout(controls)
 
-        tk.Label(readout, text="DECODED>", font=FONT_BOLD, bg=PANEL_BG, fg=ACCENT
-                 ).grid(row=1, column=0, sticky="nw", padx=10, pady=(2, 10))
-        self.text_var = tk.StringVar(value="")
-        tk.Label(readout, textvariable=self.text_var, font=FONT_MONO_TEXT, bg=PANEL_BG,
-                 fg="#ffe066", wraplength=680, justify="left"
-                 ).grid(row=1, column=1, sticky="w", pady=(2, 10))
+        # --- Video panel ---
+        video_frame = QFrame()
+        video_frame.setObjectName("videoFrame")
+        glow(video_frame, ACCENT, 30)
+        video_layout = QVBoxLayout(video_frame)
+        self.video_label = QLabel()
+        self.video_label.setFixedSize(640, 360)
+        self.video_label.setStyleSheet("border: none; background-color: black;")
+        self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        video_layout.addWidget(self.video_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        root.addWidget(video_frame, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        bottom = tk.Frame(self.root, bg=BG)
-        bottom.pack(pady=12)
-        self._make_button(bottom, "[ SPEAK TRANSMISSION ]", self.speak_text, ACCENT).pack(side="left", padx=6)
-        self._make_button(bottom, "[ WIPE BUFFER ]", self.clear_text, ACCENT).pack(side="left", padx=6)
+        # --- Readout panel ---
+        readout = QFrame()
+        readout.setObjectName("readoutPanel")
+        readout_layout = QVBoxLayout(readout)
 
-        self.status_var = tk.StringVar(value=f">>> SYSTEM IDLE. LOG: {LOG_FILE}")
-        tk.Label(self.root, textvariable=self.status_var, font=("Consolas", 9),
-                 bg=BG, fg="#3d8b52").pack(pady=(0, 10))
+        buf_row = QHBoxLayout()
+        buf_label = QLabel("BUFFER>")
+        buf_label.setFont(QFont("Consolas", 12, QFont.Weight.Bold))
+        self.buffer_val = QLabel("")
+        self.buffer_val.setFont(QFont("Consolas", 15, QFont.Weight.Bold))
+        self.buffer_val.setStyleSheet("color: #b6ffb6;")
+        buf_row.addWidget(buf_label)
+        buf_row.addWidget(self.buffer_val)
+        buf_row.addStretch()
+        readout_layout.addLayout(buf_row)
 
-    def _make_button(self, parent, text, command, color):
-        return tk.Button(
-            parent, text=text, command=command, font=FONT_BOLD,
-            bg="black", fg=color, activebackground="#001a00", activeforeground=color,
-            relief="flat", bd=0, highlightbackground=color, highlightthickness=1,
-            padx=10, pady=8, cursor="hand2",
+        text_row = QHBoxLayout()
+        text_label = QLabel("DECODED>")
+        text_label.setFont(QFont("Consolas", 12, QFont.Weight.Bold))
+        self.text_val = QLabel("")
+        self.text_val.setFont(QFont("Consolas", 15, QFont.Weight.Bold))
+        self.text_val.setStyleSheet("color: #ffe066;")
+        self.text_val.setWordWrap(True)
+        text_row.addWidget(text_label)
+        text_row.addWidget(self.text_val, stretch=1)
+        readout_layout.addLayout(text_row)
+
+        # --- Language selector + translated text row ---
+        lang_row = QHBoxLayout()
+        lang_lbl = QLabel("LANGUAGE>")
+        lang_lbl.setFont(QFont("Consolas", 12, QFont.Weight.Bold))
+        self.lang_combo = QComboBox()
+        self.lang_combo.setStyleSheet(
+            "QComboBox { background-color: #0a0a0a; color: #00ff66; border: 1px solid #0a4d24;"
+            " border-radius: 6px; padding: 4px; font-family: Consolas; font-size: 11px; }"
+            "QComboBox QAbstractItemView { background-color: #0a0a0a; color: #00ff66; }"
         )
+        # Indian languages first, then a divider, then international
+        for name in INDIAN_LANGUAGE_NAMES:
+            self.lang_combo.addItem(f"🇮🇳 {name}", SUPPORTED_LANGUAGES[name])
+        self.lang_combo.insertSeparator(len(INDIAN_LANGUAGE_NAMES))
+        for name, code in SUPPORTED_LANGUAGES.items():
+            if name not in INDIAN_LANGUAGE_NAMES:
+                self.lang_combo.addItem(name, code)
+        # Default to English (original) -- no translation
+        idx = self.lang_combo.findText("English (original)")
+        if idx >= 0:
+            self.lang_combo.setCurrentIndex(idx)
+        self.lang_combo.currentIndexChanged.connect(self._on_language_changed)
+        lang_row.addWidget(lang_lbl)
+        lang_row.addWidget(self.lang_combo)
+        lang_row.addStretch()
+        readout_layout.addLayout(lang_row)
 
-    def _blink_indicator(self):
-        self._blink_on = not self._blink_on
-        if self.running:
-            self.indicator_label.configure(fg=ACCENT if self._blink_on else ACCENT_DIM)
-            self.indicator_var.set("LIVE")
+        trans_row = QHBoxLayout()
+        trans_lbl = QLabel("TRANSLATED>")
+        trans_lbl.setFont(QFont("Consolas", 12, QFont.Weight.Bold))
+        self.trans_val = QLabel("")
+        self.trans_val.setFont(QFont("Consolas", 15, QFont.Weight.Bold))
+        self.trans_val.setStyleSheet("color: #66ccff;")
+        self.trans_val.setWordWrap(True)
+        trans_row.addWidget(trans_lbl)
+        trans_row.addWidget(self.trans_val, stretch=1)
+        readout_layout.addLayout(trans_row)
+
+        root.addWidget(readout)
+
+        # --- Bottom buttons ---
+        bottom = QHBoxLayout()
+        self.speak_btn = QPushButton("[ SPEAK TRANSMISSION ]")
+        self.clear_btn = QPushButton("[ WIPE BUFFER ]")
+        glow(self.speak_btn, ACCENT, 15)
+        glow(self.clear_btn, ACCENT, 15)
+        self.speak_btn.clicked.connect(self.speak_text)
+        self.clear_btn.clicked.connect(self.clear_text)
+        bottom.addWidget(self.speak_btn)
+        bottom.addWidget(self.clear_btn)
+        root.addLayout(bottom)
+
+        # --- Status bar ---
+        self.status_label = QLabel(f">>> SYSTEM IDLE. LOG: {LOG_FILE}")
+        self.status_label.setStyleSheet("color: #3d8b52; font-size: 10px;")
+        root.addWidget(self.status_label)
+
+    def _set_indicator(self, live):
+        if live:
+            self.indicator.setText("● LIVE")
+            self.indicator.setStyleSheet(f"color: {ACCENT};")
+            self._pulse_anim.start()
         else:
-            self.indicator_label.configure(fg="#666666")
-            self.indicator_var.set("STANDBY")
-        self.root.after(500, self._blink_indicator)
+            self._pulse_anim.stop()
+            self._indicator_opacity.setOpacity(1.0)
+            self.indicator.setText("● STANDBY")
+            self.indicator.setStyleSheet("color: #666666;")
 
     # ---------------- MODE START/STOP ----------------
 
+    def open_forensic_mode(self):
+        # Keep a reference on self so Python doesn't garbage-collect
+        # the window the moment this method returns.
+        self._forensic_window = ForensicWindow()
+        self._forensic_window.show()
+
     def start_realtime(self):
         if self.running:
-            messagebox.showinfo("Already running", "Terminate the current session first.")
+            QMessageBox.information(self, "Already running", "Terminate the current session first.")
             return
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
-            messagebox.showerror("Camera error", "Could not open the webcam.")
+            QMessageBox.critical(self, "Camera error", "Could not open the webcam.")
             return
         self.mode = "realtime"
         self._begin_session()
 
     def start_video_upload(self):
         if self.running:
-            messagebox.showinfo("Already running", "Terminate the current session first.")
+            QMessageBox.information(self, "Already running", "Terminate the current session first.")
             return
-        path = filedialog.askopenfilename(
-            title="Select intercepted video file",
-            filetypes=[("Video files", "*.mp4 *.avi *.mov *.mkv"), ("All files", "*.*")],
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select intercepted video file", "",
+            "Video files (*.mp4 *.avi *.mov *.mkv);;All files (*.*)",
         )
         if not path:
             return
         self.cap = cv2.VideoCapture(path)
         if not self.cap.isOpened():
-            messagebox.showerror("File error", "Could not open that video file.")
+            QMessageBox.critical(self, "File error", "Could not open that video file.")
             return
         fps = self.cap.get(cv2.CAP_PROP_FPS)
         self.video_fps = fps if fps and fps > 1 else 30.0
         self.video_frame_index = 0
         self.mode = "video"
-        self.status_var.set(">>> TIP: subject should face camera, eyes open, for first ~5s (calibration).")
+        self.status_label.setText(">>> TIP: subject should face camera, eyes open, for first ~5s.")
         self._begin_session()
 
     def _begin_session(self):
@@ -184,33 +341,83 @@ class BlinkMorseApp:
         self.cal_pitch_readings = []
         self.cal_yaw_readings = []
         self.frame_counter = 0
-        self.session_start = time.time()
-        self.buffer_var.set("")
-        self.text_var.set("")
-        self._update_frame()
+        self.buffer_val.setText("")
+        self.text_val.setText("")
+        self._set_indicator(True)
+
+        interval = 15 if self.mode == "realtime" else max(1, int(1000 / self.video_fps))
+        self.timer.start(interval)
 
     def stop(self):
         if not self.running:
             return
         self.running = False
+        self.timer.stop()
         if self.pipeline and self.pipeline.decoded_text.strip():
             log_text(self.pipeline.decoded_text)
         if self.cap:
             self.cap.release()
             self.cap = None
-        self.status_var.set(f">>> SESSION TERMINATED. LOG: {LOG_FILE}")
+        self._set_indicator(False)
+        self.status_label.setText(f">>> SESSION TERMINATED. LOG: {LOG_FILE}")
 
     def clear_text(self):
         if self.pipeline:
             if self.pipeline.decoded_text.strip():
                 log_text(self.pipeline.decoded_text)
             self.pipeline.clear_text()
-            self.buffer_var.set("")
-            self.text_var.set("")
+            self.buffer_val.setText("")
+            self.text_val.setText("")
+
+    def _current_lang_code(self):
+        return self.lang_combo.currentData() or "en"
+
+    def _on_language_changed(self):
+        """Only translate when the user actively picks a language."""
+        if self.pipeline and self.pipeline.decoded_text.strip():
+            self._update_translation(self.pipeline.decoded_text)
+        else:
+            self.trans_val.setText("")
+
+    def _update_translation(self, decoded_text):
+        """Translates decoded_text and updates the TRANSLATED> row."""
+        import time
+        lang_code = self._current_lang_code()
+        if lang_code in ("en", "en-US"):
+            self.trans_val.setText("")
+            return
+        # Skip if nothing new to translate
+        if not decoded_text.strip():
+            return
+        now = time.time()
+        if (decoded_text == self._last_translated_text
+                and now - self._last_translation_time < 2.0):
+            return
+        self._last_translation_time = now
+        self._last_translated_text = decoded_text
+        self.trans_val.setText("Translating...")
+        self.trans_val.setStyleSheet("color: #888888;")
+        translated, ok, err = translate(decoded_text, lang_code)
+        if ok:
+            self.trans_val.setText(translated)
+            self.trans_val.setStyleSheet("color: #66ccff;")
+        else:
+            self.trans_val.setText(f"[Error: {err}]")
+            self.trans_val.setStyleSheet("color: #ff9933;")
 
     def speak_text(self):
-        if self.pipeline and self.pipeline.decoded_text.strip():
-            self.speech_engine.speak(self.pipeline.decoded_text)
+        if not (self.pipeline and self.pipeline.decoded_text.strip()):
+            return
+        lang_code = self._current_lang_code()
+        if lang_code != "en":
+            # Translate first, then speak
+            self._update_translation(self.pipeline.decoded_text)
+            text_to_speak = self.trans_val.text()
+            if not text_to_speak or text_to_speak.startswith("[") or text_to_speak == "Translating...":
+                text_to_speak = self.pipeline.decoded_text
+        else:
+            text_to_speak = self.pipeline.decoded_text
+        self.speech_engine.speak(text_to_speak, lang_code=lang_code)
 
     # ---------------- MAIN FRAME LOOP ----------------
 
@@ -225,7 +432,7 @@ class BlinkMorseApp:
 
         ret, frame = self.cap.read()
         if not ret:
-            self.status_var.set(">>> VIDEO FINISHED." if self.mode == "video" else ">>> CAMERA READ FAILED.")
+            self.status_label.setText(">>> VIDEO FINISHED." if self.mode == "video" else ">>> CAMERA READ FAILED.")
             self.stop()
             return
 
@@ -244,9 +451,6 @@ class BlinkMorseApp:
 
         self._draw_hud_chrome(frame)
         self._render_frame(frame)
-
-        delay_ms = 15 if self.mode == "realtime" else max(1, int(1000 / self.video_fps))
-        self.root.after(delay_ms, self._update_frame)
 
     def _handle_calibration_frame(self, frame, now):
         if self.cal_start_time is None:
@@ -278,7 +482,7 @@ class BlinkMorseApp:
         cv2.putText(frame, face_msg, (15, 78),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, ACCENT_BGR, 1)
 
-        self.status_var.set(f">>> CALIBRATING... T-MINUS {max(remaining, 0):.1f}s")
+        self.status_label.setText(f">>> CALIBRATING... T-MINUS {max(remaining, 0):.1f}s")
 
         if elapsed >= CALIBRATION_DURATION:
             self._finish_calibration()
@@ -297,7 +501,7 @@ class BlinkMorseApp:
 
         self.pipeline.set_calibration(ear_threshold, pitch_baseline, yaw_baseline)
         self.calibrating = False
-        self.status_var.set(f">>> BASELINE LOCKED (threshold {ear_threshold:.3f}). DECODING ACTIVE.")
+        self.status_label.setText(f">>> BASELINE LOCKED (threshold {ear_threshold:.3f}). DECODING ACTIVE.")
 
     def _handle_decoding_frame(self, frame, now):
         events = self.pipeline.process_frame(frame, now)
@@ -314,24 +518,20 @@ class BlinkMorseApp:
 
         progress = events["letter_progress"]
         if progress > 0:
-            h, w, _ = frame.shape
             bar_x, bar_y, bar_w, bar_h = 15, 62, 220, 10
             cv2.rectangle(frame, (bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h), (60, 60, 60), 1)
             fill_w = int(bar_w * progress)
             color = DANGER_BGR if progress > 0.8 else ACCENT_BGR
             cv2.rectangle(frame, (bar_x, bar_y), (bar_x + fill_w, bar_y + bar_h), color, -1)
 
-        self.buffer_var.set(self.pipeline.morse_buffer)
-        self.text_var.set(self.pipeline.decoded_text)
+        self.buffer_val.setText(self.pipeline.morse_buffer)
+        self.text_val.setText(self.pipeline.decoded_text)
 
         if events["word_complete"]:
             log_text(self.pipeline.decoded_text)
             self.speech_engine.speak(events["word_complete"])
 
     def _draw_hud_chrome(self, frame):
-        """Draws the spy-HUD overlay: corner brackets, a sweeping scan
-        line, and a REC indicator. Purely cosmetic -- doesn't affect
-        detection, which already ran on the frame before this is called."""
         h, w, _ = frame.shape
         L = 28
         color = ACCENT_BGR
@@ -361,16 +561,24 @@ class BlinkMorseApp:
 
     def _render_frame(self, frame_bgr):
         rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        img = Image.fromarray(rgb).resize((640, 360))
-        photo = ImageTk.PhotoImage(image=img)
-        self.video_label.configure(image=photo)
-        self.video_label.image = photo
+        h, w, ch = rgb.shape
+        bytes_per_line = ch * w
+        qt_image = QImage(rgb.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+        pixmap = QPixmap.fromImage(qt_image).scaled(
+            640, 360, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
+        )
+        self.video_label.setPixmap(pixmap)
+
+    def closeEvent(self, event):
+        self.stop()
+        event.accept()
 
 
 def main():
-    root = tk.Tk()
-    app = BlinkMorseApp(root)
-    root.mainloop()
+    app = QApplication([])
+    window = BlinkMorseApp()
+    window.show()
+    app.exec()
 
 
 if __name__ == "__main__":

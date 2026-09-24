@@ -1,4 +1,7 @@
 __pycache__/
-*.pyc
 .vscode/
-venv/
+session_log.txt
+*.mp4
+*.mov
+*.avi
+*.mkv

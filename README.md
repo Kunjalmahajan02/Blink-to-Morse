@@ -79,7 +79,35 @@ facial landmarks (nose vs. eye line, nose vs. cheeks). Ratios work at
 any distance from the camera. A nod inserts a space; a turn deletes the
 last character.
 
-### 7. Video timing
+### 7. Adaptive timing and pattern repair (recorded video)
+Early evaluation showed a real failure: a user blinked S-O-S correctly
+but paused only ~0.5-0.8 s between letters, so the fixed 1.2 s rule
+merged everything into `...---...` and decoded it as `?`.
+
+Morse code is defined by **ratios**, not seconds (symbol gap 1 unit,
+letter gap 3 units, word gap 7 units). People under stress rarely keep
+exact timings, but they usually keep a rhythm. Adaptive mode:
+
+1. Estimates the person's rhythm unit from their own short gaps.
+2. Splits letters at 2.5 units (at least 0.6 s) and words at 5 units,
+   never stricter than the fixed rule.
+3. **Pattern repair:** if a blink group is still not a valid letter, it
+   tries every way of cutting it into valid letters, choosing the reading
+   with the fewest cuts, placed at the longest pauses.
+
+Letters produced by repair are marked **reconstructed** (orange, with a
+`*` on the Forensic Mode graph), so an analyst can see what was inferred
+rather than directly observed.
+
+Design note: splitting too much cannot be undone (the pieces still look
+like valid letters), while merging too much can be repaired (the merged
+pattern is invalid). The adaptive thresholds are therefore deliberately
+cautious and rely on repair for the fine work.
+
+Adaptive timing currently applies to recorded video (Forensic Mode and
+`evaluate.py`); the live webcam mode uses fixed timing.
+
+### 8. Video timing
 For recorded video, time is measured with the video's own clock
 (frame number / frames per second), not the computer's clock. Blink
 durations therefore stay correct however fast the computer processes
@@ -163,19 +191,20 @@ python evaluate.py eval_videos     # second run produces results
 ```
 Metrics: exact message match rate, character accuracy (edit distance),
 letter accuracy (ignoring spaces), expected vs. detected blinks, and the
-percentage of frames where no face was found.
+percentage of frames where no face was found. Every accuracy metric is
+reported for both **fixed** and **adaptive** timing on the same videos.
 
 ### Results
 _To be filled in from `eval_videos/summary.csv`._
 
-| Condition | Videos | Exact match | Char accuracy | Blinks expected / detected |
-|---|---|---|---|---|
-| good_light | | | | |
-| low_light | | | | |
-| glasses | | | | |
-| far | | | | |
-| whatsapp_compressed | | | | |
-| **Overall** | | | | |
+| Condition | Videos | Exact (fixed) | Char acc (fixed) | Exact (adaptive) | Char acc (adaptive) | Blinks exp / det |
+|---|---|---|---|---|---|---|
+| good_light | | | | | | |
+| low_light | | | | | | |
+| glasses | | | | | | |
+| far | | | | | | |
+| whatsapp_compressed | | | | | | |
+| **Overall** | | | | | | |
 
 ## Limitations
 
@@ -190,7 +219,7 @@ _To be filled in from `eval_videos/summary.csv`._
 
 ## Future work
 
-- Adaptive timing that learns each person's blink rhythm
+- Adaptive timing in live webcam mode
 - Distinguishing intentional from involuntary blinks
 - Video integrity checks (detecting edited or tampered footage)
 - Running on low-power edge hardware (e.g. Raspberry Pi)
@@ -203,6 +232,7 @@ Blink-to-Morse/
 ├── forensic_mode.py    # Forensic Analysis window: graph, review, confidence
 ├── evaluate.py         # Batch accuracy evaluation on labelled test videos
 ├── pipeline.py         # Core detection engine shared by every mode
+├── segmentation.py     # Fixed vs adaptive letter/word timing + pattern repair
 ├── blink_detector.py   # Eye Aspect Ratio calculation
 ├── head_gesture.py     # Nod / turn detection via landmark ratios
 ├── calibration.py      # Calibration for the command-line version

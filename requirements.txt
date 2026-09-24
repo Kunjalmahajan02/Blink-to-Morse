@@ -3,5 +3,8 @@ mediapipe==0.10.21
 numpy
 pyttsx3
 pywin32
-Pillow
-
+PyQt6
+matplotlib
+deep-translator
+gTTS
+pygame
