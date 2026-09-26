@@ -8,3 +8,4 @@ matplotlib
 deep-translator
 gTTS
 pygame
+indic-transliteration

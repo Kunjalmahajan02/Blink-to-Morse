@@ -63,11 +63,34 @@ def eye_aspect_ratio(landmarks, eye_points, frame_width, frame_height):
     return (vertical_1 + vertical_2) / (2.0 * horizontal)
 
 
+def _eye_width(landmarks, eye_points, frame_width, frame_height):
+    """Horizontal width of one eye in pixels (corner to corner)."""
+    p1 = (landmarks[eye_points[0]].x * frame_width, landmarks[eye_points[0]].y * frame_height)
+    p4 = (landmarks[eye_points[3]].x * frame_width, landmarks[eye_points[3]].y * frame_height)
+    return _euclidean(p1, p4)
+
+
 def average_ear(landmarks, frame_width, frame_height):
-    """Averages EAR across both eyes for a more stable single reading."""
+    """
+    Combines both eyes into one EAR value, weighting each eye by how
+    clearly the camera can see it.
+
+    WHY WEIGHTED (not a plain average):
+    When the head is turned, the eye further from the camera appears
+    narrower (foreshortened) and is partly hidden by the nose, so its
+    landmarks are less reliable. A plain average would still let that
+    bad eye count for 50%. Instead, each eye is weighted by the square
+    of its visible width: when facing the camera both eyes have the
+    same width, so this equals a normal average; as the head turns,
+    the far eye's weight shrinks quickly and the near eye dominates.
+    """
     left = eye_aspect_ratio(landmarks, LEFT_EYE, frame_width, frame_height)
     right = eye_aspect_ratio(landmarks, RIGHT_EYE, frame_width, frame_height)
-    return (left + right) / 2.0
+    wl = _eye_width(landmarks, LEFT_EYE, frame_width, frame_height) ** 2
+    wr = _eye_width(landmarks, RIGHT_EYE, frame_width, frame_height) ** 2
+    if wl + wr < 1e-9:
+        return (left + right) / 2.0
+    return (left * wl + right * wr) / (wl + wr)
 
 
 def is_eye_closed(avg_ear, threshold=DEFAULT_EAR_THRESHOLD):

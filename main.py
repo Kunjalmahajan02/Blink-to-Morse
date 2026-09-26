@@ -46,7 +46,7 @@ def main():
     # is actually working before you start relying on it.
     speech_engine.speak("System ready. Starting calibration.")
 
-    cal_result = calibration.calibrate(cap, face_mesh, duration=5.0, window_name=WINDOW_NAME)
+    cal_result = calibration.calibrate(cap, face_mesh, duration=3.0, window_name=WINDOW_NAME)
     if cal_result is None:
         ear_threshold = DEFAULT_EAR_THRESHOLD
         gesture_tracker = HeadGestureTracker()

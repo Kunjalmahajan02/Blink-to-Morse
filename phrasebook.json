@@ -1,0 +1,2937 @@
+{
+  "_about": "Offline phrasebook. Each entry: text, source (manual or machine), verified (true once a native speaker has checked it). Build missing languages with: python build_phrasebook.py (needs internet once).",
+  "phrases": [
+    "SOS",
+    "HELP",
+    "NEED HELP",
+    "SEND HELP",
+    "SAFE",
+    "I AM SAFE",
+    "DANGER",
+    "CAPTURED",
+    "I AM CAPTURED",
+    "INJURED",
+    "I AM INJURED",
+    "ENEMY",
+    "TRAP",
+    "DO NOT COME",
+    "COME NOW",
+    "YES",
+    "NO",
+    "WATER",
+    "DOCTOR",
+    "TORTURE",
+    "PRISONER",
+    "LOCATION",
+    "NORTH",
+    "SOUTH",
+    "EAST",
+    "WEST"
+  ],
+  "translations": {
+    "Hindi": {
+      "SOS": {
+        "text": "SOS",
+        "source": "manual",
+        "verified": false
+      },
+      "HELP": {
+        "text": "मदद",
+        "source": "manual",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "मदद चाहिए",
+        "source": "manual",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "मदद भेजो",
+        "source": "manual",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "सुरक्षित",
+        "source": "manual",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "मैं सुरक्षित हूँ",
+        "source": "manual",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "खतरा",
+        "source": "manual",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "पकड़ा गया",
+        "source": "manual",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "मुझे पकड़ लिया गया है",
+        "source": "manual",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "घायल",
+        "source": "manual",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "मैं घायल हूँ",
+        "source": "manual",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "दुश्मन",
+        "source": "manual",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "जाल",
+        "source": "manual",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "मत आओ",
+        "source": "manual",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "अभी आओ",
+        "source": "manual",
+        "verified": false
+      },
+      "YES": {
+        "text": "हाँ",
+        "source": "manual",
+        "verified": false
+      },
+      "NO": {
+        "text": "नहीं",
+        "source": "manual",
+        "verified": false
+      },
+      "WATER": {
+        "text": "पानी",
+        "source": "manual",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "डॉक्टर",
+        "source": "manual",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "यातना",
+        "source": "manual",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "कैदी",
+        "source": "manual",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "स्थान",
+        "source": "manual",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "उत्तर",
+        "source": "manual",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "दक्षिण",
+        "source": "manual",
+        "verified": false
+      },
+      "EAST": {
+        "text": "पूर्व",
+        "source": "manual",
+        "verified": false
+      },
+      "WEST": {
+        "text": "पश्चिम",
+        "source": "manual",
+        "verified": false
+      }
+    },
+    "Tamil": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "கனிப்பொருட்குவை",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "உதவி தேவையா?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "உதவி அனுப்பவும்",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "பாதுகாப்பானது",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "நான் பாதுகாப்பாக இருக்கிறேன்",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "﻿ஆபத்து",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "கைப்பற்றப்பட்டது",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "நான் கைப்பற்றப்பட்டேன்",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "காயம்",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "நான் காயமடைந்துள்ளேன்",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "machaan\n\n",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "பொறிகள்",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "வராதே",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "இப்போதே வா",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ஆம்",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "இல்லை",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "தண்ணீர்",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "மருத்துவர்",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "kandravi",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "கைதி",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "விருப்பத்தேர்வு:",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "vadaku",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "கருப்பன்,",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "கிழக்கு",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "மேற்கு",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Telugu": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "చికిత్స",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "సాయం కావాలా?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "సహాయం పంపండి",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "సురక్షితం",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "నేను సురక్షితంగా ఉన్నాను",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "ప్రమాదం",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "స్వాధీనం చేసుకున్నారు",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "నేను పట్టుబడ్డాను",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "గాయపడ్డారు",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "నేను గాయపడ్డాను",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "chepra meaning",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ఉచ్చు",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "రావద్దు",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ఇప్పుడే రండి",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "అవును",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "వద్దు",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "chittappa",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "వైద్యుడు",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "హింస",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "ఖైదీ",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "స్థానము",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "ఉత్తరం",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "దక్షిణం",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "పడమర",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Marathi": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "हेल्प ",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "मदत हवी आहे का?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "मदत पाठवा",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "सुरक्षित",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "मी सुरक्षित आहे",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "धोका",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "पकडले",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "पकड़ा गया हूँ",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "जखमी",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "मला जखम झाली आहे.",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "शत्रू",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "सापळा",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "येऊ नका",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "आता आ.",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "होय",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "नाही",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "पाणी",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "डॉक्टर (निःसंदिग्धीकरण)",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "छळ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "कैदी",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "स्थान",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "उत्तर ",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "साउथ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "पूर्व ",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "वेस्ट",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Bengali": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "আপনার কোনো পোস্টিংকে যদি বিধিলঙ্ঘনকারী হিসেবে ভুল শনাক্ত করা হয়, আপনি একটি কাউন্টার সূচনা জমা দিতে পারেন. আমাদের START_A_1 অংশীদারি সহায়তা কেন্দ্রে করুন END_A_1 এই প্রক্রিয়া সম্বন্ধে তথ্য আছে.",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "সাহায্য দরকার?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "সহায়তা পাঠান",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "নিরাপদ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "আমি নিরাপদ",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "বিপদ",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "ক্যাপচার করা হয়েছে",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "আমি ধরা পড়ে গেছি",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "আহত",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "আমি আহত",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "শত্রু",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "বাক্য",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "আসবেন না",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "তুমি এখন আসতে পারো",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "হ্যাঁ",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "না",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "jal",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ডাক্তার",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "নির্যাতন",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "বন্দী",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "এলাকার ওপর নির্ভর করে:",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "উত্তর",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "দক্ষিণ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "পূর্ব",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "পশ্চিম",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Gujarati": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "મદદ",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "મદદ જોઈએ છે,",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "મદદ મોકલો",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "સલામત",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "હું સલામત છું",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "ખતરો",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "કબજે કરેલ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "હું પકડાયો છું",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "ઇજાગ્રસ્ત",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "હું ઈજાગ્રસ્ત છું",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "છટકું",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "આવશો નહીં",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "હવે આવો",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "હા",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "ના",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "ઘોડો ગ્રામ",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ડૉક્ટર",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "ત્રાસ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "કેદી",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "સ્થળ",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "ઉત્તર દક્ષિણ પૂર્વ પશ્ચિમ",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "દક્ષિણ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "પૂર્વ",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "પશ્ચિમ",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Kannada": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "ಸಹಾಯ",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "ಸಹಾಯ ಬೇಕಿದೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "ಸಹಾಯ ಕಳುಹಿಸಿ",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "ಸುರಕ್ಷಿತ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "ನಾನು ಸುರಕ್ಷಿತವಾಗಿದ್ದೇನೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "Danger",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "ಸೆರೆಹಿಡಿಯಲಾಗಿದೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "ನನ್ನನ್ನು ಸೆರೆಹಿಡಿಯಲಾಗಿದೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "ಗಾಯಗೊಂಡಿದ್ದಾರೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "ನಾನು ಗಾಯಗೊಂಡಿದ್ದೇನೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "ಶತ್ರು",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ಬಲೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "ಬರುವುದಿಲ್ಲ",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ಈಗ ಬನ್ನಿ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ಹೌದು",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "ಇಲ್ಲ",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "ನೀರು ",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ಡಾಕ್ಟರ್",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "ಚಿತ್ರಹಿಂಸೆ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "The greatest  pleasure in life is doing  what people  say  u cannot do",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "ಸ್ಥಳ",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "ದಕ್ಷಿಣ",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "dikkugalu",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "ಪೂರ್ವ",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "ಪಶ್ಚಿಮ",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Malayalam": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "സഹായം",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "സഹായം ആവശ്യമുണ്ടോ? ",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "സഹായം അയയ്ക്കുക",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "സുരക്ഷിതം",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "ഞാൻ സുരക്ഷിതനാണ്",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "അപായം",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "പിടിച്ചെടുത്തു",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "ഞാൻ പിടിക്കപ്പെട്ടു",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "പരിക്കേറ്റ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "എനിക്ക് പരിക്കേറ്റു",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "ശത്രു",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "കെണി",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "വരരുത്",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ഇപ്പോൾ വരൂ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "അതെ",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "അല്ല",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "വെള്ളം ",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ഡോക്ടര്‍:",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "പീഡനം",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "തടവുകാരൻ",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "ഭാഷ",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "വടക്കേ നദി",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "തെക്കേ നദി",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "കിഴക്കന്‍ തിമൂര്‍",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "വെസ്റ്റ്",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Punjabi": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "ਸਹਾਇਤਾ",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "ਮਦਦ ਦੀ ਜ਼ਰੂਰਤ ਹੈ?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "ਸਹਾਇਤਾ ਭੇਜੋ",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "ਸੁਰੱਖਿਅਤ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "ਮੈਂ ਸੁਰੱਖਿਅਤ ਹਾਂ",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "ਖਤਰਾ",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "ਫੜਿਆ ਗਿਆ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "ਮੈਨੂੰ ਫੜ ਲਿਆ ਗਿਆ ਹੈ",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "ਜ਼ਖਮੀ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "ਮੈਂ ਜ਼ਖਮੀ ਹਾਂ",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "ਦੁਸ਼ਮਣ",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ਜਾਲ",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "ਨਾ ਆਵੇ",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ਹੁਣ ਆਓ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "yes",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "ਨਹੀਂ",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "ਪਾਣੀ",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ਡਾਕਟਰ",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "ਤਸੀਹੇ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "ਕੈਦੀ",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "ਟਿਕਾਣਾ",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "ਉੱਤਰ",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "ਦੱਖਣ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "ਪੂਰਬFor use in latitude coordinate",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "ਪੱਛਮ",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Odia": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "ସହାୟତା",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "ସହାୟତା ଦରକାର",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "ସହାୟତା ପଠାନ୍ତୁ",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "ସୁରକ୍ଷିତ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "ମୁଁ ସୁରକ୍ଷିତ ଅଛି ।",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "ବିପଦ",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "ଧରାପଡ଼ିଲା",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "ମୁଁ ଧରାପଡ଼ିଲି",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "ଆହତ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "ମୁଁ ଆହତ",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "ଶତ୍ରୁ",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ଫାଶ",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "ଆସନ୍ତି ନାହିଁ",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ଏବେ ଆସନ୍ତୁ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ହଁ",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "ନାଁ ।",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "ଜଳ",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ଡାକ୍ତର ::",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "ଅତ୍ୟାଚାର",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "ବନ୍ଦୀ",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "ଅବସ୍ଥିତି",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "ଉତ୍ତର",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "ଦକ୍ଷିଣ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "ପୂର୍ବ",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "ପଶ୍ଚିମ",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Urdu": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "مدد",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "مدد چاہیے",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "مدد بھیجیں",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "محفوظ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "میں محفوظ ہوں",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "خطرہ",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "پکڑا گیا",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "میں پکڑا گیا ہوں",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "زخمی",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "میں زخمی ہوں",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "دشمن",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "پھندا",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "نہ آئیں",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "ابھی آئیں",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ہاں",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "نہیں",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "پانی",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "ڈاکٹر",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "تشدد ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "قیدی ۔ ",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "مقام",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "شمال",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "جنوب",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "مشرق",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "مغرب",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Nepali": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "सहयोग",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "सहयोग चाहिन्छ? ",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "मद्दत पठाउनुहोस्",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "सुरक्षा ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "म सुरक्षित छु",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "हुनसक्नुहुन्छ।",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "समातिएको",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "म समातिएको छु",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "chot lagnu, ghaite hunu",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "म घाइते छु",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "दुश्मन",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "धराप",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "नआउनुहोस्",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "अब आउनुहोस्। ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "हो",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "होइन",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "water",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "चिकित्सक",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "यातना",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "कैदी",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "स्थान",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "उत्तर",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "दक्षिण",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "पूर्व",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "पश्चिम",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Assamese": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "সহায়",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "সহায়ৰ প্ৰয়োজন <ph dataRef=\"source1\" id=\"source1\"/>?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "সহায় পঠাওক",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "সুৰক্ষিত",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "মই সুৰক্ষিত",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "বিপদ",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "বন্দী",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "মই ধৰা পৰিছো",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "আঘাতপ্ৰাপ্ত",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "মই আঘাতপ্ৰাপ্ত",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "শত্ৰু",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ফাঁদ",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "আহিব নালাগে",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "এতিয়াই আহক",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "হয়",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "নহয় ……………….&#09;",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "পানী",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "চিকিৎসক",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "অত্যাচাৰ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "বন্দী",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "স্থান",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "উত্তৰ",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "দক্ষিণ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "পূব",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "পশ্চিম",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Sindhi": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "مدد",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "مدد جي ضرورت آهي",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "امداد موڪليو",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "محفوظ",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "مون کي محفوظ آهيان",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "خطرو",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "گرفتار ٿيل",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "مون کي گرفتار ڪيو ويو",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "زخمي ٿيل",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "زخمي ٿي پيو آهيان",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "دشمن",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "ڦاسي",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "نه اين جا",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "هاڻي اچو",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ها",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "نه",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "پاڻي",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "طبيب",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "اذيتناڪ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "قيد ڪيو ويو",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "هنڌ",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "اتر",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "جنوب",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "مشرقي",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "مغربي",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Arabic": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "مساعدة",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "أحتاج إلى المساعدة",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "أرسل المساعدة",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "الخزنة",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "أنا بأمان. ",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "الخطر",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "مقبوض, مأخوذ, مسجون",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "أنا مأسور",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "مجروح",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "لا تمسحيه!",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "عدو, خصم, العدو",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "شرك/مكيدة",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "لا تأتي",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "تعالوا , الآن ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "نعم",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "السخان الشمسي",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "مياه",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "طبيب ",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "تعذيب",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "سجين/محبوس/أسير",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "الموقع",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "شمالي",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "جَنُوب ; جَنُوبِيّ",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "شرق",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "غرب",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Russian": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "помощь",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "Нужна помощь",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "отправить помощь",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "сейф",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "Я в безопасности",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "опасность",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "Захвачена",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "я в плену",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "травмированный",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "я травмирован (-а)",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "противник",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "Ловушка",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "Не надо приезжать",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "Ну же! ",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "Да",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "Нет",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "вода",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "врач&#10;",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "Пытка",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "заключенный",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "место",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "север",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "юг",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "восток",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "запад",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "French": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "et les",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "Besoin d'aide",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "Unbanned.",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "sans risque",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "Je suis sauf",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "danger",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "captEur PRESS\n",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "je suis capturé",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "Blessé",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "Je suis blessée.",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "ennemi",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "guet-apens",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "il/elle ne vient pas",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "Rêvons, nous, de fraternité ;",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "oui",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "non",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "souterraines",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "médecin",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "torture",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "Prisonniers",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "localisation",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "nord",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "sud",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "moyen- orient/moyenne orient/le moyen orient /moyen-oriental/proche orient",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "west",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Spanish": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "ayuda",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "¿Necesita ayuda?",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "Enviar ayuda.",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "segura",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "Estoy a salvo. ",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "peligro",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "porlas",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "estoy capturado",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "lesionado",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "Si estoy lesionado ",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "enemigo",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "colectores",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "no vengas...",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "pero ahorita no puedo mañana si",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "sí",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "no",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "agua",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "doctor ",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "tortura ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "presosa",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "ubicación",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "norte",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "sur",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "este",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "Occidente",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "German": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "Hilfe",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "Hilfe erforderlich",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "HILFE SCHICKEN?",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "sicher",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "Ich bin geborgen.",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "Gefahr",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "Aufgenommen",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "ich bin gefangen",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "verletzt",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "Ich bin verletzt.",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "Feind",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "Falle",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "du rührst an nicht",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "Komm schon!",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "ja",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "nein",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "Wasser",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "Doktor",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "peinigen ",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "Häftling",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "label",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "Norden",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "Süden",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "Ost",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "Westen",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Chinese (Simplified)": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "帮助",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "需要帮助吗？ ",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "发送帮助",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "安全",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "我很安全。",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "危险",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "捕获",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "我被捕获了",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "受伤",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "我受伤了",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "n.贼",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "v.圈套 ,诱骗 , 诱捕",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "不要过来…",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "去吧。",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "是",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "否",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "水",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "医生",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "v.动刑 ,拷打,酷刑,掠治,上刑,刑,刑讯,用刑",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "犯人",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "工作所在位置",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "n.北",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "南",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "东",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "西",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Japanese": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "手助け",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "お困りですか",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "ヘルプを送る",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "安全",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "私は無事です。",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "危険",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "捕らえました",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "私は捕らえられました",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "傷を負った",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "怪我をしています",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "敵",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": "Otokonoko",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "来るな",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "さぁ、おいで",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "はい",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "無",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "水",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "医者",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "拷問",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "囚人",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "勤務地",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "北",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "南",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "東",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "西",
+        "source": "machine",
+        "verified": false
+      }
+    },
+    "Persian": {
+      "SOS": {
+        "text": "SOS",
+        "source": "machine",
+        "verified": false
+      },
+      "HELP": {
+        "text": "متوقف کردن اودین",
+        "source": "machine",
+        "verified": false
+      },
+      "NEED HELP": {
+        "text": "نیاز به کمک دارید",
+        "source": "machine",
+        "verified": false
+      },
+      "SEND HELP": {
+        "text": "ارسال کمک",
+        "source": "machine",
+        "verified": false
+      },
+      "SAFE": {
+        "text": "بی خطر است",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM SAFE": {
+        "text": "من جام امنه.",
+        "source": "machine",
+        "verified": false
+      },
+      "DANGER": {
+        "text": "خطر",
+        "source": "machine",
+        "verified": false
+      },
+      "CAPTURED": {
+        "text": "گيرافتاده .",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM CAPTURED": {
+        "text": "من اسیر شده‌ام",
+        "source": "machine",
+        "verified": false
+      },
+      "INJURED": {
+        "text": "تروما",
+        "source": "machine",
+        "verified": false
+      },
+      "I AM INJURED": {
+        "text": "من زخمی هستم",
+        "source": "machine",
+        "verified": false
+      },
+      "ENEMY": {
+        "text": "خصم .",
+        "source": "machine",
+        "verified": false
+      },
+      "TRAP": {
+        "text": ". ",
+        "source": "machine",
+        "verified": false
+      },
+      "DO NOT COME": {
+        "text": "نیاید",
+        "source": "machine",
+        "verified": false
+      },
+      "COME NOW": {
+        "text": "بیا برگردیم.",
+        "source": "machine",
+        "verified": false
+      },
+      "YES": {
+        "text": "بلی",
+        "source": "machine",
+        "verified": false
+      },
+      "NO": {
+        "text": "غولی",
+        "source": "machine",
+        "verified": false
+      },
+      "WATER": {
+        "text": "PEGSIL",
+        "source": "machine",
+        "verified": false
+      },
+      "DOCTOR": {
+        "text": "دكتر",
+        "source": "machine",
+        "verified": false
+      },
+      "TORTURE": {
+        "text": "تذکیه نفس.",
+        "source": "machine",
+        "verified": false
+      },
+      "PRISONER": {
+        "text": "زندانی",
+        "source": "machine",
+        "verified": false
+      },
+      "LOCATION": {
+        "text": "موقعیت",
+        "source": "machine",
+        "verified": false
+      },
+      "NORTH": {
+        "text": "شمال",
+        "source": "machine",
+        "verified": false
+      },
+      "SOUTH": {
+        "text": "جنوب",
+        "source": "machine",
+        "verified": false
+      },
+      "EAST": {
+        "text": "شرق ",
+        "source": "machine",
+        "verified": false
+      },
+      "WEST": {
+        "text": "غرب",
+        "source": "machine",
+        "verified": false
+      }
+    }
+  }
+}

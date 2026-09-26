@@ -27,8 +27,13 @@ HOW TO USE
 4. Run again:
        python evaluate.py eval_videos
    Results are printed and saved to:
-       eval_videos/results.csv          (one row per video)
-       eval_videos/summary.csv          (averages overall and per condition)
+       eval_videos/results_enhance-auto.csv   (one row per video)
+       eval_videos/summary_enhance-auto.csv   (averages overall and per condition)
+
+5. To measure what low-light enhancement actually changes, run the same
+   videos with it switched off and compare the two summary files:
+       python evaluate.py eval_videos --enhance off
+       python evaluate.py eval_videos --enhance auto
 
 METRICS (explained in plain words)
 ----------------------------------
@@ -44,6 +49,14 @@ METRICS (explained in plain words)
                     Big differences point to missed or extra blinks.
 - face_lost_pct:    % of frames where no face was found at all. High
                     values explain bad results on poor footage.
+- avg_brightness:   mean frame brightness (0-255, LAB lightness). Gives
+                    the "low light" condition an objective number.
+- enhanced_pct:     % of frames where night enhancement was applied.
+
+- alt_rank / recoverable_with_review: whether the true message was the
+                    adaptive decode (rank 0) or appeared among the top-5
+                    alternative readings (see alternatives.py). This measures
+                    how often a human reviewer could recover the right message.
 
 Every metric is reported twice: FIXED timing (the original 1.2 s / 3.0 s
 rule, exactly what the live app does) and ADAPTIVE timing (rhythm-based
@@ -57,14 +70,17 @@ import sys
 import time
 
 import cv2
+import mediapipe as mp
+import orientation
 
 from pipeline import BlinkMorsePipeline
 from blink_detector import average_ear
 from head_gesture import get_head_metrics
 from morse_translator import MORSE_CODE, decode_letter
 import segmentation
+import alternatives
 
-CALIBRATION_SECONDS = 5.0   # same as the GUI
+CALIBRATION_SECONDS = 3.0   # same as the GUI
 THRESHOLD_RATIO = 0.75      # same as the GUI
 VIDEO_EXTS = (".mp4", ".avi", ".mov", ".mkv")
 
@@ -105,7 +121,7 @@ def expected_symbol_count(text):
 
 # ---------------- RUNNING ONE VIDEO ----------------
 
-def run_video(path):
+def run_video(path, enhance_mode="auto"):
     """Runs calibration + the full pipeline on one video, exactly the way
     the GUI's video-upload mode does. Returns a dict of raw results."""
     cap = cv2.VideoCapture(path)
@@ -116,7 +132,12 @@ def run_video(path):
     if not fps or fps <= 1:
         fps = 30.0
 
-    pipeline = BlinkMorsePipeline()
+    # Same settings as the app's video-upload mode: no head gestures,
+    # automatic orientation correction.
+    pipeline = BlinkMorsePipeline(enhance_mode=enhance_mode, gestures_enabled=False)
+    rotation, rot_label, _ = orientation.detect_rotation(
+        cap, lambda: mp.solutions.face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1,
+                                                     refine_landmarks=True, min_detection_confidence=0.5))
     cal_frames = int(CALIBRATION_SECONDS * fps)
     cal_ear, cal_pitch, cal_yaw = [], [], []
     calibrated = False
@@ -126,19 +147,23 @@ def run_video(path):
     detected_blinks = 0
     blink_log = []
     frames_no_face = 0
+    brightness_sum = 0.0
+    frames_enhanced = 0
     start = time.time()
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
+        frame = orientation.rotate(frame, rotation)
         frame_idx += 1
         now = frame_idx / fps   # the video's own clock, not wall-clock time
 
-        # --- Phase 1: calibration (first 5 seconds) ---
+        # --- Phase 1: calibration (first CALIBRATION_SECONDS) ---
         if not calibrated:
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = pipeline.face_mesh.process(rgb)
+            results, light, _ = pipeline.detect(frame)
+            brightness_sum += light["brightness"]
+            frames_enhanced += int(light["applied"])
             h, w, _ = frame.shape
             if results.multi_face_landmarks:
                 lm = results.multi_face_landmarks[0].landmark
@@ -164,6 +189,8 @@ def run_video(path):
         # --- Phase 2: decoding ---
         before = len(pipeline.morse_buffer)
         events = pipeline.process_frame(frame, now)
+        brightness_sum += events["light"]["brightness"]
+        frames_enhanced += int(events["light"]["applied"])
         if not events["face_found"]:
             frames_no_face += 1
         # A new dot or dash was added this frame -> one blink detected.
@@ -186,14 +213,19 @@ def run_video(path):
         pipeline.morse_buffer = ""
 
     adaptive = segmentation.decode(blink_log, "adaptive")
+    _base, alts = alternatives.reading_alternatives(blink_log, "adaptive")
 
     return {
         "decoded": normalize(pipeline.decoded_text),
         "decoded_adaptive": normalize(adaptive["text"]),
         "reconstructed": adaptive["reconstructed_count"],
+        "alternative_texts": [normalize(a["text"]) for a in alts],
         "detected_blinks": detected_blinks,
         "ear_threshold": ear_threshold,
         "face_lost_pct": 100.0 * frames_no_face / max(frame_idx, 1),
+        "avg_brightness": brightness_sum / max(frame_idx, 1),
+        "rotation": rot_label,
+        "enhanced_pct": 100.0 * frames_enhanced / max(frame_idx, 1),
         "duration_s": frame_idx / fps,
         "processing_s": time.time() - start,
     }
@@ -223,11 +255,20 @@ def load_labels(labels_path):
 # ---------------- MAIN ----------------
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python evaluate.py <folder_with_videos>")
+    args = sys.argv[1:]
+    enhance_mode = "auto"
+    if "--enhance" in args:
+        i = args.index("--enhance")
+        if i + 1 >= len(args) or args[i + 1] not in ("off", "auto", "on"):
+            print("--enhance must be followed by off, auto or on")
+            sys.exit(1)
+        enhance_mode = args[i + 1]
+        del args[i:i + 2]
+    if not args:
+        print("Usage: python evaluate.py <folder_with_videos> [--enhance off|auto|on]")
         sys.exit(1)
 
-    folder = sys.argv[1]
+    folder = args[0]
     if not os.path.isdir(folder):
         print(f"Folder not found: {folder}")
         sys.exit(1)
@@ -254,7 +295,7 @@ def main():
             continue
 
         print(f"[run ] {filename} ({condition}) ...", end=" ", flush=True)
-        result = run_video(path)
+        result = run_video(path, enhance_mode)
         if "error" in result:
             print(f"ERROR: {result['error']}")
             continue
@@ -274,10 +315,18 @@ def main():
             "char_accuracy_adaptive": round(accuracy(expected, dec_a), 3),
             "letter_accuracy_adaptive": round(accuracy(expected.replace(" ", ""), dec_a.replace(" ", "")), 3),
             "reconstructed_letters": result["reconstructed"],
+            # Where the true message appears: 0 = the adaptive decode itself was
+            # correct, 1-5 = rank among the suggested alternative readings,
+            # blank = not recoverable from the top 5.
+            "alt_rank": (0 if dec_a == expected else
+                         next((k for k, t in enumerate(result["alternative_texts"], 1) if t == expected), "")),
             "expected_blinks": expected_symbol_count(expected),
             "detected_blinks": result["detected_blinks"],
             "ear_threshold": round(result["ear_threshold"], 3),
             "face_lost_pct": round(result["face_lost_pct"], 1),
+            "avg_brightness": round(result["avg_brightness"], 1),
+            "rotation_deg": result["rotation"],
+            "enhanced_pct": round(result["enhanced_pct"], 1),
             "duration_s": round(result["duration_s"], 1),
             "processing_s": round(result["processing_s"], 1),
         }
@@ -289,7 +338,7 @@ def main():
         print("No videos were evaluated.")
         return
 
-    results_path = os.path.join(folder, "results.csv")
+    results_path = os.path.join(folder, f"results_enhance-{enhance_mode}.csv")
     with open(results_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         writer.writeheader()
@@ -304,33 +353,39 @@ def main():
             "avg_char_accuracy": round(sum(r["char_accuracy"] for r in group) / n, 3),
             "avg_letter_accuracy": round(sum(r["letter_accuracy"] for r in group) / n, 3),
             "exact_match_rate_adaptive": round(sum(r["exact_match_adaptive"] for r in group) / n, 3),
+            "recoverable_with_review": round(sum(1 for r in group if r["alt_rank"] != "") / n, 3),
             "avg_char_accuracy_adaptive": round(sum(r["char_accuracy_adaptive"] for r in group) / n, 3),
             "avg_letter_accuracy_adaptive": round(sum(r["letter_accuracy_adaptive"] for r in group) / n, 3),
             "blinks_expected": sum(r["expected_blinks"] for r in group),
             "blinks_detected": sum(r["detected_blinks"] for r in group),
             "avg_face_lost_pct": round(sum(r["face_lost_pct"] for r in group) / n, 1),
+            "avg_brightness": round(sum(r["avg_brightness"] for r in group) / n, 1),
         }
 
     summary_rows = [{"group": "OVERALL", **summarize(rows)}]
     for cond in sorted({r["condition"] for r in rows}):
         summary_rows.append({"group": cond, **summarize([r for r in rows if r["condition"] == cond])})
 
-    summary_path = os.path.join(folder, "summary.csv")
+    summary_path = os.path.join(folder, f"summary_enhance-{enhance_mode}.csv")
     with open(summary_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(summary_rows[0].keys()))
         writer.writeheader()
         writer.writerows(summary_rows)
 
-    print("\n==================== SUMMARY ====================")
+    print(f"\n========== SUMMARY  (low-light enhancement: {enhance_mode.upper()}) ==========")
     print(f"{'':<22}{'':>7}{'--- FIXED TIMING ---':>30}{'--- ADAPTIVE TIMING ---':>32}")
     print(f"{'group':<22}{'videos':>7}{'exact':>8}{'char':>8}{'letter':>9}"
-          f"{'exact':>11}{'char':>8}{'letter':>9}{'blinks exp/det':>17}")
+          f"{'exact':>11}{'char':>8}{'letter':>9}{'blinks exp/det':>17}{'light':>7}{'face lost':>11}")
     for s_ in summary_rows:
         print(f"{s_['group']:<22}{s_['videos']:>7}"
               f"{s_['exact_match_rate']:>8.0%}{s_['avg_char_accuracy']:>8.0%}{s_['avg_letter_accuracy']:>9.0%}"
               f"{s_['exact_match_rate_adaptive']:>11.0%}{s_['avg_char_accuracy_adaptive']:>8.0%}"
               f"{s_['avg_letter_accuracy_adaptive']:>9.0%}"
-              f"{str(s_['blinks_expected']) + '/' + str(s_['blinks_detected']):>17}")
+              f"{str(s_['blinks_expected']) + '/' + str(s_['blinks_detected']):>17}"
+              f"{s_['avg_brightness']:>7.0f}{s_['avg_face_lost_pct']:>10.1f}%")
+    overall = summary_rows[0]
+    print(f"\nRecoverable with analyst review (true message = adaptive decode or in top-5 "
+          f"alternatives): {overall['recoverable_with_review']:.0%} of videos")
     print(f"\nPer-video results: {results_path}")
     print(f"Summary:           {summary_path}")
 

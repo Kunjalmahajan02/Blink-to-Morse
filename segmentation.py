@@ -45,6 +45,7 @@ Any extra keys are kept untouched (so callers can attach their own data).
 """
 
 from morse_translator import MORSE_CODE, decode_letter
+import codebook
 
 FIXED_LETTER_GAP = 1.2
 FIXED_WORD_GAP = 3.0
@@ -63,6 +64,9 @@ WORD_GAP_OVER_LETTER = 2.5   # a word gap must be clearly longer than a letter g
 MIN_GAPS_FOR_ADAPTIVE = 3
 
 LETTER_CODES = {code for code, ch in MORSE_CODE.items() if ch.isalpha()}
+# Codebook phrases are also atomic units: pattern-repair must never try
+# to split one into pieces (it's not letters, it's one whole phrase).
+LETTER_CODES = LETTER_CODES | set(codebook.CODEBOOK.keys())
 
 
 def _gaps(blinks):
@@ -147,13 +151,16 @@ def decode(blinks, mode="fixed"):
     # 2. Decode each group, repairing invalid ones in adaptive mode
     for group, space_after in zip(groups, word_break_after):
         code = "".join(b["symbol"] for b in group)
-        if mode == "adaptive" and code not in MORSE_CODE:
+        # A codebook phrase is a valid atomic unit on its own -- never
+        # send it into repair, which only rebuilds 1-4 symbol letters
+        # and would otherwise shred a 6+ symbol phrase into fragments.
+        if mode == "adaptive" and code not in MORSE_CODE and not codebook.is_codebook_pattern(code):
             pieces = _repair(group)
             for i, piece in enumerate(pieces):
                 piece_code = "".join(b["symbol"] for b in piece)
                 result["letters"].append({
                     "blinks": piece,
-                    "letter": decode_letter(piece_code),
+                    "letter": codebook.decode_group(piece_code, decode_letter),
                     "reconstructed": True,
                     "space_after": space_after and i == len(pieces) - 1,
                 })
@@ -161,12 +168,18 @@ def decode(blinks, mode="fixed"):
         else:
             result["letters"].append({
                 "blinks": group,
-                "letter": decode_letter(code),
+                "letter": codebook.decode_group(code, decode_letter),
                 "reconstructed": False,
                 "space_after": space_after,
             })
 
-    result["text"] = "".join(
-        entry["letter"] + (" " if entry["space_after"] else "") for entry in result["letters"]
-    ).strip()
+    parts = []
+    for entry in result["letters"]:
+        letter = entry["letter"]
+        if codebook.is_codebook_pattern("".join(b["symbol"] for b in entry["blinks"])):
+            parts.append(f" {letter} ")
+        else:
+            parts.append(letter + (" " if entry["space_after"] else ""))
+    result["text"] = "".join(parts).strip()
+    result["text"] = " ".join(result["text"].split())  # collapse any doubled spaces
     return result

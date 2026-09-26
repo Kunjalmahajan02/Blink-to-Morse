@@ -41,7 +41,7 @@ import mediapipe as mp
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSlider,
     QDoubleSpinBox, QFileDialog, QMessageBox, QApplication,
-    QTableWidget, QTableWidgetItem, QCheckBox, QComboBox,
+    QTableWidget, QTableWidgetItem, QCheckBox, QComboBox, QListWidget,
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage, QPixmap, QFont, QColor
@@ -52,6 +52,10 @@ from matplotlib.figure import Figure
 from blink_detector import average_ear
 from morse_translator import decode_letter
 import segmentation
+import enhancement
+import orientation
+import video_metadata
+import alternatives
 from pipeline import SHORT_BLINK_MAX, LETTER_PAUSE, WORD_PAUSE
 from logger import log_text, LOG_FILE
 
@@ -103,9 +107,25 @@ class ForensicWindow(QWidget):
         self.load_btn.clicked.connect(self.load_video)
         self.info_label = QLabel("No video loaded.")
         top.addWidget(self.load_btn)
+        top.addWidget(QLabel("LOW-LIGHT:"))
+        self.light_combo = QComboBox()
+        self.light_combo.addItem("Auto (enhance when dark)", "auto")
+        self.light_combo.addItem("Off", "off")
+        self.light_combo.addItem("Always on", "on")
+        self.light_combo.setToolTip("Applied when a video is loaded. Reload the video after changing it.")
+        top.addWidget(self.light_combo)
         top.addWidget(self.info_label)
+
+        meta_row = QHBoxLayout()
+        meta_caption = QLabel("FILE METADATA (from the video file itself, unverified, separate from the decoded message):")
+        meta_caption.setStyleSheet("color: #3d8b52; font-size: 10px;")
+        self.metadata_label = QLabel("No video loaded.")
+        self.metadata_label.setStyleSheet("color: #ffcc66; font-size: 10px;")
+        meta_row.addWidget(meta_caption)
+        meta_row.addWidget(self.metadata_label, stretch=1)
         top.addStretch()
         layout.addLayout(top)
+        layout.addLayout(meta_row)
 
         self.figure = Figure(figsize=(8, 2.6), facecolor="#0a0a0a")
         self.canvas = FigureCanvas(self.figure)
@@ -187,6 +207,23 @@ class ForensicWindow(QWidget):
         decode_row.addWidget(self.save_btn)
         layout.addLayout(decode_row)
 
+        alt_header = QLabel("ALTERNATIVE READINGS  (suggestions only: nothing changes until you apply one)")
+        alt_header.setStyleSheet("color: #3d8b52;")
+        layout.addWidget(alt_header)
+        alt_row = QHBoxLayout()
+        self.alt_list = QListWidget()
+        self.alt_list.setMaximumHeight(110)
+        self.alt_list.setStyleSheet("QListWidget { background-color: #0a0a0a; color: #e0ffe0;"
+                                    " border: 1px solid #0a4d24; }")
+        self.alt_list.itemDoubleClicked.connect(lambda _item: self._apply_alternative())
+        self.apply_alt_btn = QPushButton("[ APPLY SELECTED ]")
+        self.apply_alt_btn.clicked.connect(self._apply_alternative)
+        alt_row.addWidget(self.alt_list, stretch=1)
+        alt_row.addWidget(self.apply_alt_btn)
+        layout.addLayout(alt_row)
+        self.current_alternatives = []
+        self.current_included = []
+
         self.status_label = QLabel(f"Ready. Log file: {LOG_FILE}")
         self.status_label.setStyleSheet("color: #3d8b52; font-size: 10px;")
         layout.addWidget(self.status_label)
@@ -209,11 +246,19 @@ class ForensicWindow(QWidget):
         self.fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
         self.frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         self.info_label.setText(f"{self.frame_count} frames @ {self.fps:.1f} fps")
+        self.video_metadata = video_metadata.read_metadata(path)
+        self.metadata_label.setText(video_metadata.format_summary(self.video_metadata))
         self.events = []
         self.letter_groups = None
         self.decoded_text = ""
         self.decoded_label.setText("DECODED> ")
 
+        self.status_label.setText("Checking video orientation...")
+        QApplication.processEvents()
+        self.video_rotation, rot_label, _ = orientation.detect_rotation(
+            self.cap, lambda: mp.solutions.face_mesh.FaceMesh(static_image_mode=True, max_num_faces=1,
+                                                              refine_landmarks=True, min_detection_confidence=0.5))
+        self.rotation_note = f" Video rotated {rot_label} deg." if self.video_rotation is not None else ""
         self.status_label.setText("Analyzing video frame-by-frame (extracting EAR values)...")
         QApplication.processEvents()
         self._analyze_video()
@@ -221,9 +266,7 @@ class ForensicWindow(QWidget):
         self.frame_slider.setRange(0, max(self.frame_count - 1, 0))
         self.frame_slider.setValue(0)
         self._recompute_auto_events()
-        self.status_label.setText(
-            "Analysis complete. Scrub frames, adjust threshold, or mark blinks manually below."
-        )
+        self.status_label.setText("Analysis complete. " + self.light_summary + self.rotation_note)
 
     def _analyze_video(self):
         """Runs face-mesh + EAR once for every frame in the video, up front."""
@@ -232,12 +275,18 @@ class ForensicWindow(QWidget):
             min_detection_confidence=0.5, min_tracking_confidence=0.5,
         )
         self.ear_series = []
+        self.analysis_light_mode = self.light_combo.currentData()
+        brightness_sum, enhanced = 0.0, 0
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         idx = 0
         while True:
             ret, frame = self.cap.read()
             if not ret:
                 break
+            frame = orientation.rotate(frame, self.video_rotation)
+            frame, light = enhancement.enhance(frame, self.analysis_light_mode)
+            brightness_sum += light["brightness"]
+            enhanced += int(light["applied"])
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(rgb)
             if results.multi_face_landmarks:
@@ -251,6 +300,13 @@ class ForensicWindow(QWidget):
                 self.status_label.setText(f"Analyzing... frame {idx}/{self.frame_count}")
                 QApplication.processEvents()
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        n = max(idx, 1)
+        lost = sum(1 for v in self.ear_series if v is None)
+        self.light_summary = (
+            f"Avg brightness {brightness_sum / n:.0f}/255, night enhancement on "
+            f"{100 * enhanced / n:.0f}% of frames ({self.analysis_light_mode}), "
+            f"face lost on {100 * lost / n:.1f}% of frames."
+        )
 
     # ---------------- PLOTTING ----------------
 
@@ -369,6 +425,7 @@ class ForensicWindow(QWidget):
                     "start": start, "end": end, "duration": duration,
                     "symbol": symbol, "manual": False, "include": True,
                     "confidence": confidence, "confidence_reason": reason,
+                    "original_symbol": symbol,
                 })
             else:
                 i += 1
@@ -399,6 +456,7 @@ class ForensicWindow(QWidget):
             "start": start, "end": end, "duration": duration,
             "symbol": symbol, "manual": True, "include": True,
             "confidence": "MANUAL", "confidence_reason": "analyst-verified by eye",
+            "original_symbol": symbol,
         })
         self.events.sort(key=lambda e: e["start"])
         self.pending_start = None
@@ -418,6 +476,8 @@ class ForensicWindow(QWidget):
             self.table.setCellWidget(row, 0, include_cb)
 
             label = "MANUAL" if e["manual"] else "AUTO"
+            if not e["manual"] and e["symbol"] != e.get("original_symbol", e["symbol"]):
+                label += ", CORRECTED"
             self.table.setItem(row, 1, QTableWidgetItem(f"{e['start']} ({label})"))
             self.table.setItem(row, 2, QTableWidgetItem(str(e["end"])))
             self.table.setItem(row, 3, QTableWidgetItem(f"{e['duration']:.3f}"))
@@ -461,6 +521,9 @@ class ForensicWindow(QWidget):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, value)
         ret, frame = self.cap.read()
         if ret:
+            # Show exactly what the detector analysed (rotated/enhanced if applied)
+            frame = orientation.rotate(frame, getattr(self, "video_rotation", None))
+            frame, _ = enhancement.enhance(frame, getattr(self, "analysis_light_mode", "off"))
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             h, w, ch = rgb.shape
             qt_image = QImage(rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
@@ -485,13 +548,17 @@ class ForensicWindow(QWidget):
         if not included:
             self.decoded_label.setText("DECODED> (no reviewed/included blink events)")
             self.letter_groups = None
+            self.alt_list.clear()
+            self.current_alternatives = []
             self._redraw_plot()
             return
 
         # Letter/word segmentation lives in segmentation.py so Forensic
         # Mode and evaluate.py use exactly the same logic.
         blinks = [{"t_start": e["start"] / self.fps, "t_end": e["end"] / self.fps,
-                   "symbol": e["symbol"], "src": e} for e in included]
+                   "duration": e["duration"], "symbol": e["symbol"], "src": e,
+                   "low_tracking": "tracking gap" in e.get("confidence_reason", "")}
+                  for e in included]
         mode = self.timing_combo.currentData()
         result = segmentation.decode(blinks, mode)
 
@@ -523,10 +590,69 @@ class ForensicWindow(QWidget):
             f"{result['letter_gap']:.2f}s, word gap {result['word_gap']:.2f}s{unit_txt}."
         )
         self._redraw_plot()
+        self._update_alternatives(blinks, included, mode)
+
+    # ---------------- ALTERNATIVE READINGS + RAW / FINAL LAYERS ----------------
+
+    def _raw_text(self, mode):
+        """What the detector produced on its own: every automatic blink,
+        with its original symbol, and no analyst changes."""
+        auto = sorted([e for e in self.events if not e["manual"]], key=lambda e: e["start"])
+        blinks = [{"t_start": e["start"] / self.fps, "t_end": e["end"] / self.fps,
+                   "symbol": e.get("original_symbol", e["symbol"])} for e in auto]
+        return segmentation.decode(blinks, mode)["text"] if blinks else ""
+
+    def _corrections(self):
+        notes = []
+        for e in sorted(self.events, key=lambda e: e["start"]):
+            t = e["start"] / self.fps
+            if e["manual"] and e["include"]:
+                notes.append(f"added blink at {t:.2f}s")
+            elif not e["manual"] and not e["include"]:
+                notes.append(f"excluded blink at {t:.2f}s")
+            elif not e["manual"] and e["symbol"] != e.get("original_symbol", e["symbol"]):
+                notes.append(f"blink at {t:.2f}s '{e['original_symbol']}' -> '{e['symbol']}'")
+        return notes
+
+    def _update_alternatives(self, blinks, included, mode):
+        self.alt_list.clear()
+        self.current_included = included
+        _base, self.current_alternatives = alternatives.reading_alternatives(blinks, mode)
+        for k, alt in enumerate(self.current_alternatives, 1):
+            hint = f"   [contains known phrase: {', '.join(alt['known_phrases'])}]" if alt["known_phrases"] else ""
+            self.alt_list.addItem(f"{k}. {alt['text']}   <- {alt['explanation']}{hint}")
+        if not self.current_alternatives:
+            self.alt_list.addItem("(no alternative readings)")
+
+        raw = self._raw_text(mode)
+        corrections = self._corrections()
+        layers = f"RAW: {raw}  |  FINAL: {self.decoded_text}  |  {len(corrections)} analyst correction(s)"
+        self.status_label.setText(self.status_label.text() + "   " + layers)
+
+    def _apply_alternative(self):
+        row = self.alt_list.currentRow()
+        if row < 0 or row >= len(self.current_alternatives):
+            QMessageBox.information(self, "Nothing selected", "Select an alternative reading first.")
+            return
+        for idx, kind, _old, new in self.current_alternatives[row]["changes"]:
+            event = self.current_included[idx]
+            if kind == "flip":
+                event["symbol"] = new
+            else:
+                event["include"] = False
+        self._invalidate_decode()
+        self._refresh_table()
+        self._decode()
 
     def _save_log(self):
         if self.decoded_text.strip():
-            log_text(f"[FORENSIC MODE] {self.decoded_text}")
+            mode = self.timing_combo.currentData()
+            corrections = self._corrections()
+            meta = getattr(self, "video_metadata", None)
+            meta_txt = video_metadata.format_summary(meta) if meta else "not read"
+            log_text(f"[FORENSIC MODE] RAW: {self._raw_text(mode)} | FINAL: {self.decoded_text} | "
+                     f"CORRECTIONS: {'; '.join(corrections) if corrections else 'none'} | "
+                     f"FILE METADATA (unverified): {meta_txt}")
             self.status_label.setText(f"Saved to log: {LOG_FILE}")
         else:
             QMessageBox.information(self, "Nothing to save", "Decode some text first.")
