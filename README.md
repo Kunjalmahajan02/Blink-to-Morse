@@ -456,6 +456,7 @@ Blink-to-Morse/
 ├── requirements.txt
 ├── setup_environment.bat # One-time setup of the project environment (.venv)
 ├── run_blinkbridge.bat   # Double-click launcher: runs gui.py with .venv
+├── venv_guard.py       # Restarts any script inside .venv if launched with another Python
 └── README.md
 ```
 
@@ -476,9 +477,12 @@ python -m venv .venv
 .venv\Scripts\python.exe gui.py
 ```
 
-Running plain `python gui.py` uses the computer's shared Python
-instead of `.venv`, and may fail if other projects changed its
-libraries.
+You can also start it with plain `python gui.py` or VS Code's Run
+button. Every runnable script first imports `venv_guard.py`, which
+checks whether it is running inside `.venv`; if not, it restarts the
+same script with the `.venv` Python automatically. It uses only
+Python's built-in modules, so it works even when the shared Python's
+libraries are broken.
 
 Notes:
 - `mediapipe` is pinned to **0.10.21**. Versions from 0.10.30 onward

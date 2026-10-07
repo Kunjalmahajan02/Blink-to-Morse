@@ -21,6 +21,8 @@ The phrase list itself is in phrasebook.json under "phrases" - add your
 own phrases there and run this again.
 """
 
+import venv_guard  # noqa: F401 -- must stay first: switches to the project's .venv if needed
+
 import json
 import time
 

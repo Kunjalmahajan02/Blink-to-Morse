@@ -64,6 +64,8 @@ gaps + pattern repair, see segmentation.py), so the improvement can be
 measured on the same videos.
 """
 
+import venv_guard  # noqa: F401 -- must stay first: switches to the project's .venv if needed
+
 import csv
 import os
 import sys

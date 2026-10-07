@@ -35,6 +35,8 @@ RUN: opened from gui.py via the "FORENSIC ANALYSIS MODE" button, or
 standalone with: python forensic_mode.py
 """
 
+import venv_guard  # noqa: F401 -- must stay first: switches to the project's .venv if needed
+
 import cv2
 import mediapipe as mp
 

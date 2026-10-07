@@ -8,6 +8,8 @@ CONTROLS:
     't' - speak the current decoded text out loud
 """
 
+import venv_guard  # noqa: F401 -- must stay first: switches to the project's .venv if needed
+
 import cv2
 import mediapipe as mp
 import time

@@ -14,6 +14,8 @@ exactly as they were. Only this display/window layer is new.
 RUN: python gui.py
 """
 
+import venv_guard  # noqa: F401 -- must stay first: switches to the project's .venv if needed
+
 import time
 
 import cv2
