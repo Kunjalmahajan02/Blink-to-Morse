@@ -5,3 +5,4 @@ session_log.txt
 *.mov
 *.avi
 *.mkv
+.venv/

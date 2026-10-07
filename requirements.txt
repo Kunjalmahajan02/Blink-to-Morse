@@ -1,5 +1,7 @@
 opencv-python
 mediapipe==0.10.21
+# MediaPipe 0.10.x needs protobuf below 5 (newer versions, e.g. installed by TensorFlow, break Face Mesh)
+protobuf>=4.25.3,<5
 numpy
 pyttsx3
 pywin32

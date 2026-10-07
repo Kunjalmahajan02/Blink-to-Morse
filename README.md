@@ -454,19 +454,41 @@ Blink-to-Morse/
 ├── main.py             # Simple command-line version (no GUI); a deliberately minimal
 │                       # teaching script that does not include the newer features
 ├── requirements.txt
+├── setup_environment.bat # One-time setup of the project environment (.venv)
+├── run_blinkbridge.bat   # Double-click launcher: runs gui.py with .venv
 └── README.md
 ```
 
 ## Setup
 
+The project runs in its own Python environment (`.venv`), so other
+projects on the same computer can't break it.
+
+**Windows, the easy way:**
+1. Double-click `setup_environment.bat` once. It creates `.venv` with
+   Python 3.12 and installs everything in `requirements.txt`.
+2. Double-click `run_blinkbridge.bat` to start the app.
+
+**Manually:**
 ```bash
-pip install -r requirements.txt
-python gui.py
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe gui.py
 ```
+
+Running plain `python gui.py` uses the computer's shared Python
+instead of `.venv`, and may fail if other projects changed its
+libraries.
 
 Notes:
 - `mediapipe` is pinned to **0.10.21**. Versions from 0.10.30 onward
   removed the Face Mesh "Solutions" API this project uses.
+- `protobuf` is pinned **below 5**. MediaPipe 0.10.x crashes with newer
+  protobuf (errors such as `'MessageFactory' object has no attribute
+  'GetPrototype'`), and other libraries such as TensorFlow install
+  newer versions. A separate environment lets both coexist: TensorFlow
+  keeps its protobuf, BlinkBridge keeps the one it needs.
+- Developed and tested with Python 3.12.
 - On Windows, `speech.py` initialises COM on the speaking thread; without
   this, offline speech runs silently.
 
