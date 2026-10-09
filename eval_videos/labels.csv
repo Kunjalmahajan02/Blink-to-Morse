@@ -1,3 +1,6 @@
 filename,expected,condition
-WIN_20260923_21_09_57_Pro.mp4,SOS,good_light
-WIN_20260923_21_15_06_Pro.mp4,SOS,good_light
+p1(1)_sos_goodlight.mp4,SOS,good_light
+p1_sos_goodlight.mp4,SOS,good_light
+p2_help_goodlight.mp4,HELP,good_light
+p2_sos_glasses.mp4,SOS,glasses
+p2_talha_lowlight.mp4,TALHA,low_light

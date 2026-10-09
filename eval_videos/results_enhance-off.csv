@@ -1,0 +1,6 @@
+filename,condition,expected,decoded,exact_match,char_accuracy,letter_accuracy,decoded_adaptive,exact_match_adaptive,char_accuracy_adaptive,letter_accuracy_adaptive,reconstructed_letters,alt_rank,expected_blinks,detected_blinks,ear_threshold,face_lost_pct,avg_brightness,rotation_deg,enhanced_pct,duration_s,processing_s
+p1(1)_sos_goodlight.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,2,,9,12,0.23,0.0,157.5,0,0.0,16.0,4.2
+p1_sos_goodlight.mp4,good_light,SOS,SOS S,0,0.333,0.667,SO S S,0,0.0,0.667,0,,9,12,0.215,0.0,151.3,0,0.0,18.4,5.0
+p2_help_goodlight.mp4,good_light,HELP,HEL?,0,0.75,0.75,HELEQ,0,0.5,0.5,2,,13,14,0.178,0.0,123.1,0,0.0,18.9,9.6
+p2_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.195,0.0,138.0,0,0.0,14.9,10.3
+p2_talha_lowlight.mp4,low_light,TALHA,TALHA,1,1.0,1.0,TALHA,1,1.0,1.0,0,0,13,13,0.167,0.0,108.2,0,0.0,24.8,8.6

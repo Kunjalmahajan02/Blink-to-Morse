@@ -5,7 +5,7 @@ Measures how accurate the system actually is, instead of just showing
 that a demo works.
 
 It runs the EXACT same detection engine used by the app's
-"Upload Intercept File" mode (pipeline.py, with the same 5-second
+"Upload Intercept File" mode (pipeline.py, with the same 3-second
 calibration) on a folder of test videos, compares what the system
 decoded against what the person was really trying to blink, and
 reports accuracy numbers.
@@ -19,10 +19,12 @@ HOW TO USE
        python evaluate.py eval_videos
    This creates eval_videos/labels.csv listing every video.
 
-3. Open labels.csv in Excel/Notepad and fill in, for every video:
+3. Open labels.csv in Excel/Notepad/VS Code and fill in, for every video:
        expected   -> what the person actually blinked, e.g. SOS
        condition  -> the recording condition, e.g. good_light, low_light,
                      glasses, far, whatsapp_compressed
+   Then SAVE the file: this script reads the saved file, not the editor.
+   The filename column must match the video's name exactly (with .mp4).
 
 4. Run again:
        python evaluate.py eval_videos
@@ -34,6 +36,10 @@ HOW TO USE
    videos with it switched off and compare the two summary files:
        python evaluate.py eval_videos --enhance off
        python evaluate.py eval_videos --enhance auto
+
+6. Adding more videos later: copy them into the folder and add one row
+   per video to labels.csv (the file is only created automatically the
+   first time). Videos without a row are listed at the end of each run.
 
 METRICS (explained in plain words)
 ----------------------------------
@@ -250,8 +256,29 @@ def create_labels_template(folder, labels_path):
 
 
 def load_labels(labels_path):
-    with open(labels_path, newline="", encoding="utf-8") as f:
+    # "utf-8-sig" also reads files saved from Excel as "CSV UTF-8", which
+    # start with an invisible marker that would otherwise hide the
+    # 'filename' column. Normal files are read exactly the same way.
+    with open(labels_path, newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
+
+
+def report_mismatches(folder, labels, missing):
+    """Explain any difference between labels.csv and the videos in the folder."""
+    on_disk = sorted(f for f in os.listdir(folder) if f.lower().endswith(VIDEO_EXTS))
+    listed = {(label.get("filename") or "").strip().lower() for label in labels}
+    unlisted = [v for v in on_disk if v.lower() not in listed]
+
+    if missing:
+        print(f"\n{len(missing)} name(s) in labels.csv do not match any file in {folder}.")
+        print("  Check that labels.csv is SAVED, and that each name matches the file exactly (with .mp4).")
+        print("  Videos actually in the folder:")
+        for v in on_disk:
+            print(f"     {v}")
+    if unlisted:
+        print("\nNot in labels.csv yet (add a row for each to include it):")
+        for v in unlisted:
+            print(f"     {v}")
 
 
 # ---------------- MAIN ----------------
@@ -280,11 +307,14 @@ def main():
         create_labels_template(folder, labels_path)
         return
 
+    labels = load_labels(labels_path)
     rows = []
-    for label in load_labels(labels_path):
-        filename = label.get("filename", "").strip()
-        expected = normalize(label.get("expected", ""))
-        condition = label.get("condition", "").strip() or "unspecified"
+    missing = []
+    for label in labels:
+        # "or ''" handles rows with an empty or missing column
+        filename = (label.get("filename") or "").strip()
+        expected = normalize(label.get("expected") or "")
+        condition = (label.get("condition") or "").strip() or "unspecified"
 
         if not filename:
             continue
@@ -294,6 +324,7 @@ def main():
         path = os.path.join(folder, filename)
         if not os.path.exists(path):
             print(f"[skip] {filename}: file not found")
+            missing.append(filename)
             continue
 
         print(f"[run ] {filename} ({condition}) ...", end=" ", flush=True)
@@ -336,8 +367,10 @@ def main():
         print(f"expected '{expected}' -> fixed '{decoded}' ({row['char_accuracy']:.0%}) | "
               f"adaptive '{dec_a}' ({row['char_accuracy_adaptive']:.0%})")
 
+    report_mismatches(folder, labels, missing)
+
     if not rows:
-        print("No videos were evaluated.")
+        print("\nNo videos were evaluated.")
         return
 
     results_path = os.path.join(folder, f"results_enhance-{enhance_mode}.csv")
