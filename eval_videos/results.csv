@@ -1,13 +1,31 @@
 enhance,run_at,filename,condition,expected,decoded,exact_match,char_accuracy,letter_accuracy,decoded_adaptive,exact_match_adaptive,char_accuracy_adaptive,letter_accuracy_adaptive,reconstructed_letters,alt_rank,expected_blinks,detected_blinks,ear_threshold,face_lost_pct,avg_brightness,rotation_deg,enhanced_pct,duration_s,processing_s
-off,2026-10-19 12:54,p1(1)_sos_goodlight.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,2,,9,12,0.23,0.0,157.5,0,0.0,16.0,6.8
-off,2026-10-19 12:54,p1_sos_goodlight.mp4,good_light,SOS,SOS S,0,0.333,0.667,SO S S,0,0.0,0.667,0,,9,12,0.215,0.0,151.3,0,0.0,18.4,7.0
-off,2026-10-19 12:54,p2_help_goodlight.mp4,good_light,HELP,HEL?,0,0.75,0.75,HELEQ,0,0.5,0.5,2,,13,14,0.178,0.0,123.1,0,0.0,18.9,7.2
-off,2026-10-19 12:54,p2_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.195,0.0,138.0,0,0.0,14.9,13.5
-off,2026-10-19 12:54,p2_talha_lowlight.mp4,low_light,TALHA,TALHA,1,1.0,1.0,TALHA,1,1.0,1.0,0,0,13,13,0.167,0.0,108.2,0,0.0,24.8,21.9
-off,2026-10-19 12:54,p1_isha_lowlight.mp4,low_light,ISHA,E5T,0,0.0,0.0,ESI T,0,0.0,0.25,0,,11,7,0.248,0.0,17.7,0,0.0,14.3,5.2
-auto,2026-10-19 12:56,p1(1)_sos_goodlight.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,2,,9,12,0.23,0.0,157.5,0,0.0,16.0,5.6
-auto,2026-10-19 12:56,p1_sos_goodlight.mp4,good_light,SOS,SOS S,0,0.333,0.667,SO S S,0,0.0,0.667,0,,9,12,0.215,0.0,151.3,0,0.0,18.4,12.3
-auto,2026-10-19 12:56,p2_help_goodlight.mp4,good_light,HELP,HEL?,0,0.75,0.75,HELEQ,0,0.5,0.5,2,,13,14,0.178,0.0,123.1,0,0.0,18.9,16.8
-auto,2026-10-19 12:56,p2_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.195,0.0,138.0,0,0.0,14.9,27.7
-auto,2026-10-19 12:56,p2_talha_lowlight.mp4,low_light,TALHA,TALHA,1,1.0,1.0,TALHA,1,1.0,1.0,0,0,13,13,0.167,0.0,108.2,0,0.0,24.8,21.7
-auto,2026-10-19 12:56,p1_isha_lowlight.mp4,low_light,ISHA,E5T,0,0.0,0.0,ESEE T,0,0.0,0.0,0,,11,7,0.247,0.0,17.7,0,100.0,14.3,9.3
+off,2026-10-19 15:58,p1(1)_sos_goodlight.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,2,,9,12,0.23,0.0,157.5,0,0.0,16.0,4.1
+off,2026-10-19 15:58,p1_sos_goodlight.mp4,good_light,SOS,SOS S,0,0.333,0.667,SO S S,0,0.0,0.667,0,,9,12,0.215,0.0,151.3,0,0.0,18.4,4.5
+off,2026-10-19 15:58,p2_help_goodlight.mp4,good_light,HELP,HEL?,0,0.75,0.75,HELEQ,0,0.5,0.5,2,,13,14,0.178,0.0,123.1,0,0.0,18.9,6.9
+off,2026-10-19 15:58,p2_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.195,0.0,138.0,0,0.0,14.9,85.6
+off,2026-10-19 15:58,p2_talha_lowlight.mp4,low_light,TALHA,TALHA,1,1.0,1.0,TALHA,1,1.0,1.0,0,0,13,13,0.167,0.0,108.2,0,0.0,24.8,13.6
+off,2026-10-19 15:58,p1_isha_lowlight.mp4,low_light,ISHA,E5T,0,0.0,0.0,ESI T,0,0.0,0.25,0,,11,7,0.248,0.0,17.7,0,0.0,14.3,2.1
+off,2026-10-19 15:58,p3_help_sideangle.mp4,side_angle,HELP,HELP,1,1.0,1.0,HELP,1,1.0,1.0,0,0,13,13,0.181,0.0,174.3,0,0.0,21.5,9.1
+off,2026-10-19 15:58,p4_sos_goodlight.mp4,good_light,SOS,E?,0,0.0,0.0,ESOS,0,0.667,0.667,3,,9,10,0.228,0.0,152.4,0,0.0,12.6,5.3
+off,2026-10-19 15:58,p5_help_goodlight.mp4,good_light,HELP,HELP,1,1.0,1.0,HELP,1,1.0,1.0,0,0,13,13,0.217,0.0,155.9,0,0.0,19.6,8.6
+off,2026-10-19 15:58,p6_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.218,0.0,146.1,0,0.0,14.8,6.3
+off,2026-10-19 15:58,p7_help_lowlight.mp4,low_light,HELP,HEL2,0,0.75,0.75,HEL2,0,0.75,0.75,0,,13,14,0.216,0.0,150.9,0,0.0,21.9,10.6
+off,2026-10-19 15:58,p8_sos_glasses.mp4,glasses,SOS,SOD,0,0.667,0.667,SOD,0,0.667,0.667,0,1,9,9,0.22,0.0,179.0,0,0.0,18.4,10.3
+off,2026-10-19 15:58,p9_sos_lowlight.mp4,low_light,SOS,?,0,0.0,0.0,WOO,0,0.333,0.333,0,,9,9,0.188,0.0,152.4,0,0.0,13.2,7.3
+off,2026-10-19 15:58,p10_sos_goodlight.mp4,good_light,SOS,HOHL,0,0.0,0.0,HTMH RE,0,0.0,0.0,0,,9,15,0.196,1.0,117.2,0,0.0,19.3,7.4
+off,2026-10-19 15:58,p11_sos_goodlight.mp4,good_light,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.161,0.0,173.9,0,0.0,16.8,6.0
+auto,2026-10-19 16:01,p1(1)_sos_goodlight.mp4,good_light,SOS,?S,0,0.333,0.333,SGS S,0,0.0,0.333,2,,9,12,0.23,0.0,157.5,0,0.0,16.0,4.7
+auto,2026-10-19 16:01,p1_sos_goodlight.mp4,good_light,SOS,SOS S,0,0.333,0.667,SO S S,0,0.0,0.667,0,,9,12,0.215,0.0,151.3,0,0.0,18.4,4.8
+auto,2026-10-19 16:01,p2_help_goodlight.mp4,good_light,HELP,HEL?,0,0.75,0.75,HELEQ,0,0.5,0.5,2,,13,14,0.178,0.0,123.1,0,0.0,18.9,5.4
+auto,2026-10-19 16:01,p2_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.195,0.0,138.0,0,0.0,14.9,8.7
+auto,2026-10-19 16:01,p2_talha_lowlight.mp4,low_light,TALHA,TALHA,1,1.0,1.0,TALHA,1,1.0,1.0,0,0,13,13,0.167,0.0,108.2,0,0.0,24.8,7.9
+auto,2026-10-19 16:01,p1_isha_lowlight.mp4,low_light,ISHA,E5T,0,0.0,0.0,ESEE T,0,0.0,0.0,0,,11,7,0.247,0.0,17.7,0,100.0,14.3,2.9
+auto,2026-10-19 16:01,p3_help_sideangle.mp4,side_angle,HELP,HELP,1,1.0,1.0,HELP,1,1.0,1.0,0,0,13,13,0.181,0.0,174.3,0,0.0,21.5,8.6
+auto,2026-10-19 16:01,p4_sos_goodlight.mp4,good_light,SOS,E?,0,0.0,0.0,ESOS,0,0.667,0.667,3,,9,10,0.228,0.0,152.4,0,0.0,12.6,4.7
+auto,2026-10-19 16:01,p5_help_goodlight.mp4,good_light,HELP,HELP,1,1.0,1.0,HELP,1,1.0,1.0,0,0,13,13,0.217,0.0,155.9,0,0.0,19.6,7.1
+auto,2026-10-19 16:01,p6_sos_glasses.mp4,glasses,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.218,0.0,146.1,0,0.0,14.8,5.7
+auto,2026-10-19 16:01,p7_help_lowlight.mp4,low_light,HELP,HEL2,0,0.75,0.75,HEL2,0,0.75,0.75,0,,13,14,0.216,0.0,150.9,0,0.0,21.9,7.8
+auto,2026-10-19 16:01,p8_sos_glasses.mp4,glasses,SOS,SOD,0,0.667,0.667,SOD,0,0.667,0.667,0,1,9,9,0.22,0.0,179.0,0,0.0,18.4,6.7
+auto,2026-10-19 16:01,p9_sos_lowlight.mp4,low_light,SOS,?,0,0.0,0.0,WOO,0,0.333,0.333,0,,9,9,0.188,0.0,152.4,0,0.0,13.2,4.9
+auto,2026-10-19 16:01,p10_sos_goodlight.mp4,good_light,SOS,HOHR,0,0.0,0.0,HTMH AE,0,0.0,0.0,0,,9,14,0.196,1.0,117.2,0,9.5,19.3,7.8
+auto,2026-10-19 16:01,p11_sos_goodlight.mp4,good_light,SOS,SOS,1,1.0,1.0,SOS,1,1.0,1.0,0,0,9,9,0.161,0.0,173.9,0,0.0,16.8,6.3
