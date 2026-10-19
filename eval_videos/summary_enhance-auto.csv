@@ -1,5 +1,0 @@
-group,videos,exact_match_rate,avg_char_accuracy,avg_letter_accuracy,exact_match_rate_adaptive,recoverable_with_review,avg_char_accuracy_adaptive,avg_letter_accuracy_adaptive,blinks_expected,blinks_detected,avg_face_lost_pct,avg_brightness
-OVERALL,6,0.333,0.569,0.625,0.333,0.333,0.417,0.583,64,67,0.0,116.0
-glasses,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,9,9,0.0,138.0
-good_light,3,0.0,0.472,0.583,0.0,0.0,0.167,0.5,31,38,0.0,144.0
-low_light,2,0.5,0.5,0.5,0.5,0.5,0.5,0.5,24,20,0.0,63.0

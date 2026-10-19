@@ -28,12 +28,19 @@ HOW TO USE
 
 4. Run again:
        python evaluate.py eval_videos
-   Results are printed and saved to:
-       eval_videos/results_enhance-auto.csv   (one row per video)
-       eval_videos/summary_enhance-auto.csv   (averages overall and per condition)
+   Results are printed and saved to just two files:
+       eval_videos/results.csv   (one row per video, for each enhancement setting)
+       eval_videos/summary.csv   (averages overall and per condition, for each setting)
+   The 'enhance' column says which setting a row belongs to, and 'run_at'
+   says when it was measured. Every run re-checks all the videos in
+   labels.csv and replaces only the rows of its own setting, so running
+   again never duplicates rows or creates extra files.
+   Close results.csv / summary.csv in Excel before running: Windows does
+   not let a program save a file that is open in Excel.
 
 5. To measure what low-light enhancement actually changes, run the same
-   videos with it switched off and compare the two summary files:
+   videos with it switched off, then compare the 'off' and 'auto' rows
+   in summary.csv:
        python evaluate.py eval_videos --enhance off
        python evaluate.py eval_videos --enhance auto
 
@@ -263,6 +270,47 @@ def load_labels(labels_path):
         return list(csv.DictReader(f))
 
 
+# ---------------- SAVING RESULTS ----------------
+
+# Order in which the enhancement settings appear in the CSV files.
+MODE_ORDER = {"off": 0, "auto": 1, "on": 2}
+
+
+def locked_file(*paths):
+    """Return the first file that another program (usually Excel) has open,
+    or None. Checked before the videos run, so nothing is lost."""
+    for path in paths:
+        if os.path.exists(path):
+            try:
+                with open(path, "a", encoding="utf-8"):
+                    pass
+            except PermissionError:
+                return path
+    return None
+
+
+def save_rows(path, enhance_mode, run_at, new_rows):
+    """Save new_rows into one CSV file shared by all enhancement settings.
+
+    Rows saved earlier for the OTHER settings are kept as they are. Rows for
+    THIS setting are replaced by new_rows, so running again never creates
+    duplicates. Rows written by older versions of this script (which had no
+    'enhance' column) are dropped, because they are out of date.
+    """
+    kept = []
+    if os.path.exists(path):
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            kept = [r for r in csv.DictReader(f)
+                    if r.get("enhance") in MODE_ORDER and r.get("enhance") != enhance_mode]
+    stamped = [{"enhance": enhance_mode, "run_at": run_at, **r} for r in new_rows]
+    all_rows = sorted(kept + stamped, key=lambda r: MODE_ORDER[r["enhance"]])
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(stamped[0].keys()),
+                                restval="", extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(all_rows)
+
+
 def report_mismatches(folder, labels, missing):
     """Explain any difference between labels.csv and the videos in the folder."""
     on_disk = sorted(f for f in os.listdir(folder) if f.lower().endswith(VIDEO_EXTS))
@@ -306,6 +354,14 @@ def main():
     if not os.path.exists(labels_path):
         create_labels_template(folder, labels_path)
         return
+
+    results_path = os.path.join(folder, "results.csv")
+    summary_path = os.path.join(folder, "summary.csv")
+    locked = locked_file(results_path, summary_path)
+    if locked:
+        print(f"{locked} is open in another program (probably Excel).")
+        print("Close it, then run the same command again.")
+        sys.exit(1)
 
     labels = load_labels(labels_path)
     rows = []
@@ -373,12 +429,6 @@ def main():
         print("\nNo videos were evaluated.")
         return
 
-    results_path = os.path.join(folder, f"results_enhance-{enhance_mode}.csv")
-    with open(results_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        writer.writeheader()
-        writer.writerows(rows)
-
     # ---- Summary: overall + per condition ----
     def summarize(group):
         n = len(group)
@@ -401,11 +451,16 @@ def main():
     for cond in sorted({r["condition"] for r in rows}):
         summary_rows.append({"group": cond, **summarize([r for r in rows if r["condition"] == cond])})
 
-    summary_path = os.path.join(folder, f"summary_enhance-{enhance_mode}.csv")
-    with open(summary_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(summary_rows[0].keys()))
-        writer.writeheader()
-        writer.writerows(summary_rows)
+    # ---- Save: ONE results file and ONE summary file for all settings ----
+    run_at = time.strftime("%Y-%m-%d %H:%M")
+    try:
+        save_rows(results_path, enhance_mode, run_at, rows)
+        save_rows(summary_path, enhance_mode, run_at, summary_rows)
+    except PermissionError:
+        print("\nCould not save: results.csv or summary.csv was opened in another program "
+              "(probably Excel) while the videos were running.")
+        print("Close it, then run the same command again.")
+        sys.exit(1)
 
     print(f"\n========== SUMMARY  (low-light enhancement: {enhance_mode.upper()}) ==========")
     print(f"{'':<22}{'':>7}{'--- FIXED TIMING ---':>30}{'--- ADAPTIVE TIMING ---':>32}")
@@ -421,8 +476,9 @@ def main():
     overall = summary_rows[0]
     print(f"\nRecoverable with analyst review (true message = adaptive decode or in top-5 "
           f"alternatives): {overall['recoverable_with_review']:.0%} of videos")
-    print(f"\nPer-video results: {results_path}")
-    print(f"Summary:           {summary_path}")
+    print(f"\nSaved (rows for enhance = {enhance_mode} updated, other settings kept):")
+    print(f"  Per-video results: {results_path}")
+    print(f"  Summary:           {summary_path}")
 
 
 if __name__ == "__main__":
